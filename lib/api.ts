@@ -44,3 +44,38 @@ export const auth = {
 
   getMe: () => fetchApi("/me"),
 };
+
+export const events = {
+  createEvent: (
+    data: Omit<Event, "id" | "createdBy" | "attendees" | "createdAt">
+  ) =>
+    fetchApi("/events", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  getEvents: () => fetchApi("/events"),
+
+  getEvent: (id: string) => fetchApi(`/events/${id}`),
+
+  updateEvent: (id: string, data: Partial<Event>) =>
+    fetchApi(`/events/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+
+  deleteEvent: (id: string) =>
+    fetchApi(`/events/${id}`, {
+      method: "DELETE",
+    }),
+
+  registerEvent: (id: string) =>
+    fetchApi(`/events/${id}/register`, {
+      method: "POST",
+    }),
+
+  unregisterEvent: (id: string) =>
+    fetchApi(`/events/${id}/unregister`, {
+      method: "DELETE",
+    }),
+};

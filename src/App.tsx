@@ -3,6 +3,7 @@ import { Toaster } from "react-hot-toast";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import "./index.css";
+import CreateEvent from "./pages/CreateEvent";
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
           <Routes>
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/createEvent" element={<CreateEvent />} />
           </Routes>
         </main>
         <Toaster position="top-right" />
