@@ -1,14 +1,25 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import { useAuthStore } from "../authStore";
+import toast from "react-hot-toast";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { signIn } = useAuthStore();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      await signIn(email, password);
+      toast.success("successfully logged in!");
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error("Failed to login , please check  credentials.");
+    }
   };
 
   return (
