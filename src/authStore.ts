@@ -45,8 +45,11 @@ export const useAuthStore = create<AuthState>((set) => ({
       const { user } = await auth.getMe();
       set({ user });
     } catch (error) {
-      console.error("Authentication error:", error.message);
-      localStorage.removeItem("authToken"); // Clear invalid token
+      if (error instanceof Error) {
+        console.error("Authentication error:", error.message);
+      }
+
+      localStorage.removeItem("authToken");
       set({ user: null });
     } finally {
       set({ loading: false });
