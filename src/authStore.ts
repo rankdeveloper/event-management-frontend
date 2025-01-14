@@ -22,11 +22,19 @@ export const useAuthStore = create<AuthState>((set) => ({
   loading: true,
 
   checkUser: async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      set({ user: null, loading: false });
+      return;
+    }
+
     set({ loading: true });
     try {
       const { user } = await auth.getMe();
       set({ user });
-    } catch {
+    } catch (error) {
+      console.error("Authentication error:", error.message);
+      localStorage.removeItem("authToken"); // Clear invalid token
       set({ user: null });
     } finally {
       set({ loading: false });
@@ -34,8 +42,9 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   signIn: async (email: string, password: string) => {
-    const { user } = await auth.login({ email, password });
-    set({ user });
+    const { token } = await auth.login({ email, password });
+    localStorage.setItem("authToken", token); // Save token
+    await useAuthStore.getState().checkUser(); // Fetch and update user state
   },
 
   signUp: async (email: string, password: string, username: string) => {

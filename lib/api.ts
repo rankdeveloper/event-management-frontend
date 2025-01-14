@@ -2,11 +2,13 @@ const api_url = "https://event-management-backend-10tv.onrender.com";
 
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   try {
+    const token = localStorage.getItem("authToken");
     const response = await fetch(`${api_url}${endpoint}`, {
       ...options,
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
+        Authorization: token ? `Bearer ${token}` : "",
         ...options.headers,
       },
     });
@@ -40,9 +42,9 @@ export const auth = {
       body: JSON.stringify(data),
     }),
 
-  logout: () => fetchApi("/logout", { method: "POST" }),
+  logout: () => fetchApi("/user/logout", { method: "POST" }),
 
-  getMe: () => fetchApi("/me"),
+  getMe: () => fetchApi("/user/me"),
 };
 
 export const events = {

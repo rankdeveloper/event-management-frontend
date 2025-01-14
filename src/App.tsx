@@ -4,8 +4,14 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import "./index.css";
 import CreateEvent from "./pages/CreateEvent";
+import { useEffect } from "react";
+import { useAuthStore } from "./authStore";
 
 export default function App() {
+  useEffect(() => {
+    useAuthStore.getState().checkUser();
+  }, []);
+
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-gray-50">

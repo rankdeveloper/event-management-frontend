@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Calendar } from "lucide-react";
-
 import toast from "react-hot-toast";
-
 import { useAuthStore } from "../authStore";
 import { categories } from "../rowData";
+import { events } from "../../lib/api";
 
 export default function CreateEvent() {
   const { user } = useAuthStore();
@@ -26,12 +25,20 @@ export default function CreateEvent() {
       return;
     }
 
+    const eventPayload = {
+      ...formData,
+      createdBy: user.id,
+      attendees: [user.id],
+    };
+
     try {
-      console.log("formData", formData);
+      console.log("Payload to backend:", eventPayload);
+      await events.createEvent(eventPayload);
       toast.success("Event created successfully!");
       navigate("/dashboard");
-    } catch (error) {
-      toast.error("Error creating event");
+    } catch (error: any) {
+      console.error("Error creating event:", error);
+      toast.error(error.response?.data?.message || "Error creating event");
     }
   };
 
