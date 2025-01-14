@@ -1,0 +1,97 @@
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { format } from "date-fns";
+import { Calendar, MapPin, Users } from "lucide-react";
+import { events } from "../../lib/api";
+import { Event } from "../authStore";
+
+import toast from "react-hot-toast";
+
+export default function Dashboard() {
+  const [eventsList, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const fetchEvents = async () => {
+    try {
+      const data = await events.getEvents();
+      setEvents(data);
+    } catch (error) {
+      toast.error("Error fetching events");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Upcoming Events</h1>
+        <Link
+          to="/createEvent"
+          className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+        >
+          Create Event
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {eventsList.map((event) => (
+          <Link
+            key={event._id}
+            to={`/events/${event._id}`}
+            className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"
+          >
+            <div className="p-6">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                {event.title}
+              </h3>
+              <p className="text-gray-600 mb-4 line-clamp-2">
+                {event.description}
+              </p>
+
+              <div className="space-y-2">
+                <div className="flex items-center text-gray-500">
+                  <Calendar className="h-5 w-5 mr-2" />
+                  <span>{format(new Date(event.date), "PPP")}</span>
+                </div>
+                <div className="flex items-center text-gray-500">
+                  <MapPin className="h-5 w-5 mr-2" />
+                  <span>{event.location}</span>
+                </div>
+                <div className="flex items-center text-gray-500">
+                  <Users className="h-5 w-5 mr-2" />
+                  <span>
+                    {event.attendees.length} / {event.maxAttendees} attendees
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      {eventsList.length === 0 && (
+        <div className="text-center py-12">
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No events found
+          </h3>
+          <p className="text-gray-500">
+            Create your first event to get started!
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}

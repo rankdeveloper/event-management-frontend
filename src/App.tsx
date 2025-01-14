@@ -6,6 +6,10 @@ import "./index.css";
 import CreateEvent from "./pages/CreateEvent";
 import { useEffect } from "react";
 import { useAuthStore } from "./authStore";
+import Dashboard from "./pages/Dashboard";
+import EventDetails from "./pages/EventDetails";
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
 
 export default function App() {
   useEffect(() => {
@@ -15,11 +19,15 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-gray-50">
+        <Navbar />
         <main className="container mx-auto px-4 py-8">
           <Routes>
+            <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/createEvent" element={<CreateEvent />} />
+            <Route path="/events/:id" element={<EventDetails />} />
+            <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </main>
         <Toaster position="top-right" />

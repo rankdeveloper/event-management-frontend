@@ -6,6 +6,18 @@ export interface User {
   email: string;
   username: string;
 }
+export interface Event {
+  _id: string;
+  title: string;
+  description: string;
+  date: string;
+  location: string;
+  category: string;
+  createdBy: User;
+  attendees: User[];
+  maxAttendees: number;
+  createdAt: string;
+}
 
 interface AuthState {
   user: User | null;

@@ -49,7 +49,7 @@ export const auth = {
 
 export const events = {
   createEvent: (
-    data: Omit<Event, "id" | "createdBy" | "attendees" | "createdAt">
+    data: Omit<Event, "_id" | "createdBy" | "attendees" | "createdAt">
   ) =>
     fetchApi("/events", {
       method: "POST",
@@ -77,7 +77,7 @@ export const events = {
     }),
 
   unregisterEvent: (id: string) =>
-    fetchApi(`/events/${id}/unregister`, {
+    fetchApi(`/events/${id}/register`, {
       method: "DELETE",
     }),
 };
