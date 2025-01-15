@@ -29,6 +29,7 @@ export default function Register() {
       setLoading(false);
     }
   };
+  console.log("loading", loading);
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center">
