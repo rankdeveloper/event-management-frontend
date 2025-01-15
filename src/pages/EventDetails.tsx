@@ -75,7 +75,10 @@ export default function EventDetails() {
           if (!prevEvent) return null;
           return {
             ...prevEvent,
-            attendees: [...prevEvent.attendees, { id: user.id }],
+            attendees: [
+              ...prevEvent.attendees,
+              { id: user.id, email: user.email, username: user.username },
+            ],
           };
         });
         toast.success("Successfully registered for event");
@@ -217,7 +220,7 @@ export default function EventDetails() {
                   </div>
                   <div className="ml-4">
                     <p className="text-gray-900 font-medium">
-                      {event?.createdBy || "-"}
+                      {event?._id || "-"}
                     </p>
                     <p className="text-gray-500 text-sm">Organizer</p>
                   </div>

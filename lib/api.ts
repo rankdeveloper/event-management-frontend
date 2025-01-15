@@ -1,3 +1,5 @@
+import { Event } from "../src/authStore";
+
 const api_url = "https://event-management-backend-10tv.onrender.com";
 
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {

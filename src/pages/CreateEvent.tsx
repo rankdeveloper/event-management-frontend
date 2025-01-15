@@ -32,13 +32,17 @@ export default function CreateEvent() {
     };
 
     try {
-      console.log("Payload to backend:", eventPayload);
       await events.createEvent(eventPayload);
       toast.success("Event created successfully!");
       navigate("/dashboard");
-    } catch (error: any) {
-      console.error("Error creating event:", error);
-      toast.error(error.response?.data?.message || "Error creating event");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Error creating event:", error);
+        toast.error(error.message || "Error creating event");
+      } else {
+        console.error("Unknown error creating event:", error);
+        toast.error("Unknown error creating event");
+      }
     }
   };
 
