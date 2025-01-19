@@ -111,7 +111,7 @@ export default function EventDetails() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
+      <div className="flex justify-center items-center min-h-[80vh]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
       </div>
     );
@@ -136,10 +136,12 @@ export default function EventDetails() {
     );
   }
 
+  console.log("user : ", user);
+  console.log("event : ", event);
   const isAttending = user
     ? event.attendees.some((a) => a.id === user.id)
     : false;
-  const isOwner = user && event.createdBy.id === user.id;
+  const isOwner = user && event.createdBy.toString() == user.id;
   const isFull = event.attendees.length >= event.maxAttendees;
 
   return (
