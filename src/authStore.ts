@@ -35,6 +35,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   checkUser: async () => {
     const token = localStorage.getItem("authToken");
+    console.log("token", token);
     if (!token) {
       set({ user: null, loading: false });
       return;
@@ -43,14 +44,16 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ loading: true });
     try {
       const { user } = await auth.getMe();
+      console.log("user checkuser api ", user);
       set({ user });
+      console.log("checkUser ,", user);
     } catch (error) {
       if (error instanceof Error) {
         console.error("Authentication error:", error.message);
       }
 
-      localStorage.removeItem("authToken");
-      set({ user: null });
+      // localStorage.removeItem("authToken");
+      // set({ user: null });
     } finally {
       set({ loading: false });
     }
@@ -72,6 +75,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   signOut: async () => {
     await auth.logout();
+    localStorage.removeItem("authToken")
     set({ user: null });
   },
 }));

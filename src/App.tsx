@@ -10,10 +10,18 @@ import Dashboard from "./pages/Dashboard";
 import EventDetails from "./pages/EventDetails";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
+import EditEvent from "./pages/EditEvent";
+import EditProfile from "./pages/EditProfile";
 
 export default function App() {
+  // useEffect(() => {
+  //   const auth = useAuthStore.getState().checkUser();
+  //   console.log("auth", auth);
+  // }, []);
+  const { checkUser } = useAuthStore();
+
   useEffect(() => {
-    useAuthStore.getState().checkUser();
+    checkUser();
   }, []);
 
   return (
@@ -27,6 +35,8 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/createEvent" element={<CreateEvent />} />
             <Route path="/events/:id" element={<EventDetails />} />
+            <Route path="/events/:id/edit" element={<EditEvent />} />
+            <Route path="/profile/edit" element={<EditProfile />} />
             <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </main>

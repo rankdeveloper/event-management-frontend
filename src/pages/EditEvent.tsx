@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Calendar } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Calendar } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../authStore";
 import { categories } from "../rowData";
 import { events } from "../../lib/api";
 
-export default function CreateEvent() {
+export default function EditEvent() {
+  const { id } = useParams<{ id: string }>();
   const user = useAuthStore((state) => state.user);
-
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -19,31 +20,55 @@ export default function CreateEvent() {
     maxAttendees: 100,
   });
 
+  useEffect(() => {
+    if (id) {
+      fetchEventDetails();
+    }
+  }, [id]);
+
+  const fetchEventDetails = async () => {
+    try {
+      const event = await events.getEvent(id!);
+      if (event.createdBy._id.toString() !== user?.id) {
+        toast.error("You can only edit your own events");
+        navigate("/dashboard");
+        return;
+      }
+      setFormData({
+        title: event.title,
+        description: event.description,
+        date: new Date(event.date).toISOString().slice(0, 16),
+        location: event.location,
+        category: event.category,
+        maxAttendees: event.maxAttendees,
+      });
+    } catch (error) {
+      console.error("Error fetching event:", error);
+      toast.error("Error loading event details");
+      navigate("/dashboard");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("user", user);
     if (!user) {
-      toast.error("You must be logged in to create an event");
+      toast.error("You must be logged in to edit an event");
       return;
     }
 
-    const eventPayload = {
-      ...formData,
-      createdBy: user.id,
-      attendees: [user.id],
-    };
-
     try {
-      await events.createEvent(eventPayload);
-      toast.success("Event created successfully!");
-      navigate("/dashboard");
+      await events.updateEvent(id!, formData);
+      toast.success("Event updated successfully!");
+      navigate(`/events/${id}`);
     } catch (error: unknown) {
       if (error instanceof Error) {
-        console.error("Error creating event:", error);
-        toast.error(error.message || "Error creating event");
+        console.error("Error updating event:", error);
+        toast.error(error.message || "Error updating event");
       } else {
-        console.error("Unknown error creating event:", error);
-        toast.error("Unknown error creating event");
+        console.error("Unknown error updating event:", error);
+        toast.error("Unknown error updating event");
       }
     }
   };
@@ -60,24 +85,23 @@ export default function CreateEvent() {
     }));
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[80vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-md mx-auto px-4 py-8">
+    <div className="max-w-2xl mx-auto px-4 py-8">
       <div className="bg-white rounded-lg shadow-lg p-6">
-        <Link
-          to="/dashboard"
-          className="inline-flex items-center text-indigo-600 hover:text-indigo-700 text-sm"
-        >
-          <ArrowLeft className="h-5 w-5 mr-2" />
-          Back to Dashboard
-        </Link>
-        <div className="flex gap-4">
-          <div className="flex items-center justify-center mb-6">
-            <Calendar className="h-12 w-12 text-indigo-600" />
-          </div>
-          <h1 className="text-3xl font-bold text-center text-gray-900 mb-8">
-            Create New Event
-          </h1>
+        <div className="flex items-center justify-center mb-6">
+          <Calendar className="h-12 w-12 text-indigo-600" />
         </div>
+        <h1 className="text-3xl font-bold text-center text-gray-900 mb-8">
+          Edit Event
+        </h1>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
@@ -121,10 +145,10 @@ export default function CreateEvent() {
             >
               Date and Time
             </label>
-
             <input
               type="datetime-local"
               name="date"
+              required={true}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               value={formData.date}
               onChange={handleChange}
@@ -159,6 +183,7 @@ export default function CreateEvent() {
               name="category"
               required={true}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              value={formData.category}
               onChange={handleChange}
             >
               <option value="">Select a category</option>
@@ -172,7 +197,7 @@ export default function CreateEvent() {
 
           <div>
             <label
-              htmlFor="max_attendees"
+              htmlFor="maxAttendees"
               className="block text-sm font-medium text-gray-700"
             >
               Maximum Attendees
@@ -187,11 +212,12 @@ export default function CreateEvent() {
               value={formData.maxAttendees}
             />
           </div>
+
           <button
             type="submit"
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            Create Event
+            Update Event
           </button>
         </form>
       </div>

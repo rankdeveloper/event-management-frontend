@@ -24,7 +24,14 @@ export default function EventDetails() {
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    if (id) fetchEventDetails();
+    if (!user) {
+      toast.error("Please login first");
+      navigate("/dashboard");
+      return;
+    }
+  }, [user]);
+  useEffect(() => {
+    if (id && user) fetchEventDetails();
   }, [id]);
 
   const fetchEventDetails = async () => {
@@ -36,6 +43,7 @@ export default function EventDetails() {
     } catch (error) {
       console.error("Error fetching event:", error);
       toast.error("Error loading event details");
+
       navigate("/dashboard");
     } finally {
       setLoading(false);
@@ -85,7 +93,9 @@ export default function EventDetails() {
       }
     } catch (error) {
       console.error("Error updating registration:", error);
-      toast.error("Error updating registration");
+      toast.error(
+        error instanceof Error ? error.message : "Error updating registration"
+      );
     }
   };
 
@@ -136,12 +146,10 @@ export default function EventDetails() {
     );
   }
 
-  console.log("user : ", user);
-  console.log("event : ", event);
   const isAttending = user
     ? event.attendees.some((a) => a.id === user.id)
     : false;
-  const isOwner = user && event.createdBy.toString() == user.id;
+  const isOwner = user && event.createdBy._id.toString() == user.id;
   const isFull = event.attendees.length >= event.maxAttendees;
 
   return (
@@ -180,7 +188,7 @@ export default function EventDetails() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-6">
               <div className="prose max-w-none">
-                <p className="text-gray-600">{event.description}</p>
+                <p className="text-gray-600">{event?.description || "-"}</p>
               </div>
 
               <div className="space-y-4">
@@ -196,16 +204,16 @@ export default function EventDetails() {
                 </div>
                 <div className="flex items-center text-gray-600">
                   <MapPin className="h-5 w-5 mr-3" />
-                  <span>{event.location}</span>
+                  <span>{event?.location || "-"}</span>
                 </div>
                 <div className="flex items-center text-gray-600">
                   <Tag className="h-5 w-5 mr-3" />
-                  <span>{event.category}</span>
+                  <span>{event?.category || "-"}</span>
                 </div>
                 <div className="flex items-center text-gray-600">
                   <Users className="h-5 w-5 mr-3" />
                   <span>
-                    {event.attendees.length} / {event.maxAttendees} attendees
+                    {event?.attendees.length} / {event?.maxAttendees} attendees
                   </span>
                 </div>
               </div>
@@ -222,7 +230,7 @@ export default function EventDetails() {
                   </div>
                   <div className="ml-4">
                     <p className="text-gray-900 font-medium">
-                      {event?._id || "-"}
+                      {event?.createdBy.username || "-"}
                     </p>
                     <p className="text-gray-500 text-sm">Organizer</p>
                   </div>
@@ -261,16 +269,16 @@ export default function EventDetails() {
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">
                     Attendees
                   </h3>
-                  <div className="space-y-3">
-                    {event.attendees.map((attendee) => (
+                  <div className=" flex flex-wrap gap-3 justify-content-center items-center">
+                    {event?.attendees.map((attendee) => (
                       <div
                         key={attendee.id}
-                        className="flex items-center text-gray-600"
+                        className="flex g-1 items-center text-gray-600"
                       >
                         <div className="bg-gray-100 rounded-full p-2">
                           <Users className="h-4 w-4" />
                         </div>
-                        <span className="ml-3">{attendee.id || "-"}</span>
+                        <span className="">{attendee?.username || "-"}</span>
                       </div>
                     ))}
                   </div>

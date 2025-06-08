@@ -88,7 +88,9 @@ export default function Dashboard() {
             No events found
           </h3>
           <p className="text-gray-500">
-            Create your first event to get started!
+            <Link to="/creatEvent">
+              Create your first event to get started!
+            </Link>
           </p>
         </div>
       )}

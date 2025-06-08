@@ -4,6 +4,7 @@ import { useAuthStore } from "../authStore";
 
 export default function Navbar() {
   const { user, signOut } = useAuthStore();
+  console.log("user : ", user);
 
   return (
     <nav className="bg-white shadow-lg fixed w-full ">
