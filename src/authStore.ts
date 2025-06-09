@@ -17,6 +17,7 @@ export interface Event {
   attendees: User[];
   maxAttendees: number;
   createdAt: string;
+  image: string;
 }
 
 interface AuthState {
@@ -75,7 +76,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   signOut: async () => {
     await auth.logout();
-    localStorage.removeItem("authToken")
+    localStorage.removeItem("authToken");
     set({ user: null });
   },
 }));

@@ -34,11 +34,12 @@ const api_url = "http://localhost:5000";
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   try {
     const token = localStorage.getItem("authToken") || "";
+    const isFormData = options.body instanceof FormData;
     const response = await fetch(`${api_url}${endpoint}`, {
       ...options,
       credentials: "include",
       headers: {
-        "Content-Type": "application/json",
+        ...(isFormData ? {} : { "Content-Type": "application/json" }),
         Authorization: token ? `Bearer ${token}` : "",
         ...options.headers,
       },
@@ -125,11 +126,12 @@ export const auth = {
 
 export const events = {
   createEvent: (
-    data: Omit<Event, "_id" | "createdBy" | "attendees" | "createdAt">
+    // data: Omit<Event, "_id" | "createdBy" | "attendees" | "createdAt">
+    data: FormData
   ) =>
     fetchApi("/events", {
       method: "POST",
-      body: JSON.stringify(data),
+      body: data,
     }),
 
   getEvents: () => fetchApi("/events"),

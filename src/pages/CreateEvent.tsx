@@ -17,24 +17,38 @@ export default function CreateEvent() {
     location: "",
     category: "",
     maxAttendees: 100,
+    image: null,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("user", user);
+
     if (!user) {
       toast.error("You must be logged in to create an event");
       return;
     }
+    const payload = new FormData();
 
-    const eventPayload = {
-      ...formData,
-      createdBy: user.id,
-      attendees: [user.id],
-    };
+    payload.append("title", formData.title);
+    payload.append("description", formData.description);
+    payload.append("location", formData.location);
+    payload.append("date", formData.date);
+    payload.append("category", formData.category);
+    payload.append("maxAttendees", formData.maxAttendees.toString());
+    payload.append("image", formData.image); // 👈 File object from input
+    payload.append("createdBy", user.id);
+    payload.append("attendees", user.id); // or JSON.stringify([...])
+
+    // const eventPayload = {
+    //   ...formData,
+
+    //   createdBy: user.id,
+    //   attendees: [user.id],
+    // };
 
     try {
-      await events.createEvent(eventPayload);
+      console.log("Form Data:", payload);
+      await events.createEvent(payload);
       toast.success("Event created successfully!");
       navigate("/dashboard");
     } catch (error: unknown) {
@@ -145,6 +159,30 @@ export default function CreateEvent() {
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               value={formData.location}
               onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="Image"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Image
+            </label>
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              required={true}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  setFormData((prev: any) => ({
+                    ...prev,
+                    image: file,
+                  }));
+                }
+              }}
             />
           </div>
 
