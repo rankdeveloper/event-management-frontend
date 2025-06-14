@@ -18,6 +18,7 @@ export default function EditEvent() {
     location: "",
     category: "",
     maxAttendees: 100,
+    image: null,
   });
 
   useEffect(() => {
@@ -41,6 +42,7 @@ export default function EditEvent() {
         location: event.location,
         category: event.category,
         maxAttendees: event.maxAttendees,
+        image: event?.image,
       });
     } catch (error) {
       console.error("Error fetching event:", error);
@@ -59,7 +61,20 @@ export default function EditEvent() {
     }
 
     try {
-      await events.updateEvent(id!, formData);
+      const payload = new FormData();
+
+      payload.append("title", formData.title);
+      payload.append("description", formData.description);
+      payload.append("location", formData.location);
+      payload.append("date", formData.date);
+      payload.append("category", formData.category);
+      payload.append("maxAttendees", formData.maxAttendees.toString());
+      payload.append("image", formData.image || "");
+      payload.append("createdBy", user.id);
+
+      console.log("payload : ", payload);
+      await events.updateEvent(id!, payload);
+
       toast.success("Event updated successfully!");
       navigate(`/events/${id}`);
     } catch (error: unknown) {
@@ -169,6 +184,30 @@ export default function EditEvent() {
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               value={formData.location}
               onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="Image"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Image
+            </label>
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              required={true}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  setFormData((prev: any) => ({
+                    ...prev,
+                    image: file,
+                  }));
+                }
+              }}
             />
           </div>
 

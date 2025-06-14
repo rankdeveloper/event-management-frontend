@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import { format } from "date-fns";
 import {
   Calendar,
@@ -42,7 +42,7 @@ export default function EventDetails() {
       setEvent(data);
     } catch (error) {
       console.error("Error fetching event:", error);
-      toast.error("Error loading event details");
+      toast.error(error.message || "Error loading event details");
 
       navigate("/dashboard");
     } finally {
@@ -169,7 +169,10 @@ export default function EventDetails() {
             {isOwner && (
               <div className="flex space-x-2">
                 <button
-                  onClick={() => navigate(`/events/${event._id}/edit`)}
+                  onClick={() =>
+                    // navigate(`/events/${event._id}/edit?mode=edit`)
+                    navigate(`/createEvent/${event._id}?mode=edit`)
+                  }
                   className="p-2 text-gray-600 hover:text-indigo-600 rounded-full hover:bg-gray-100"
                 >
                   <Edit className="h-5 w-5" />

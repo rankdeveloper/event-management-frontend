@@ -141,7 +141,7 @@ export const events = {
   updateEvent: (id: string, data: Partial<Event>) =>
     fetchApi(`/events/${id}`, {
       method: "PUT",
-      body: JSON.stringify(data),
+      body: data,
     }),
 
   deleteEvent: (id: string) =>
