@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-import "./index.css";
+import "./App.css";
 import CreateEvent from "./pages/CreateEvent";
 import { useEffect } from "react";
 import { useAuthStore } from "./authStore";
@@ -11,6 +11,7 @@ import EventDetails from "./pages/EventDetails";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import EditProfile from "./pages/EditProfile";
+import Stat from "./pages/dash";
 
 export default function App() {
   const { checkUser } = useAuthStore();
@@ -34,6 +35,7 @@ export default function App() {
             {/* <Route path="/events/:id/edit" element={<EditEvent />} /> */}
             <Route path="/profile/edit" element={<EditProfile />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/stat" element={<Stat />} />
           </Routes>
         </main>
         <Toaster position="top-right" />
