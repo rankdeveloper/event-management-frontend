@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { Calendar, MapPin, Users } from "lucide-react";
 import { events } from "../../lib/api";
 import { Event } from "../authStore";
+import image1 from "../assets/image1.png";
 
 import toast from "react-hot-toast";
 
@@ -53,6 +54,14 @@ export default function Dashboard() {
             to={`/events/${event._id}`}
             className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"
           >
+            <div className="h-[200px] w-full shadow  overflow-hidden">
+              <img
+                src={event.image || image1}
+                alt={event.title}
+                className="h-full w-full object-cover"
+              />
+            </div>
+
             <div className="p-6">
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 {event.title}

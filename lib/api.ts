@@ -144,6 +144,12 @@ export const events = {
       body: data,
     }),
 
+  completedEvent: (id: string, data: { completed: boolean }) =>
+    fetchApi(`/events/completed/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+
   deleteEvent: (id: string) =>
     fetchApi(`/events/${id}`, {
       method: "DELETE",

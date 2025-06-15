@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { format } from "date-fns";
 import {
   Calendar,
@@ -10,6 +10,7 @@ import {
   Edit,
   Trash2,
   ArrowLeft,
+  BadgeCheck,
 } from "lucide-react";
 import { events } from "../../lib/api";
 import { useAuthStore, Event } from "../authStore";
@@ -22,6 +23,7 @@ export default function EventDetails() {
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
+  const [completed, setCompleted] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -38,15 +40,45 @@ export default function EventDetails() {
     try {
       console.log("Fetching event details for ID:", id);
       const data = await events.getEvent(id!);
-      console.log("Event details received:", data);
+      // Normalize attendees to always have 'id'
+      const normalizedAttendees = (data.attendees as any[]).map((a) => ({
+        ...a,
+        id: a.id || a._id,
+      }));
+      data.attendees = normalizedAttendees;
       setEvent(data);
+      setCompleted(data.completed || false);
     } catch (error) {
       console.error("Error fetching event:", error);
-      toast.error(error.message || "Error loading event details");
+      toast.error(
+        error instanceof Error ? error.message : "Error loading event details"
+      );
 
       navigate("/dashboard");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCompletionChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newCompletedStatus = e.target.checked;
+    try {
+      const response = await events.completedEvent(id!, {
+        completed: newCompletedStatus,
+      });
+      setCompleted(newCompletedStatus);
+      toast.success(response.message);
+    } catch (error) {
+      console.error("Error updating completion status:", error);
+
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Error updating completion status"
+      );
+      setCompleted(!newCompletedStatus);
     }
   };
 
@@ -119,6 +151,8 @@ export default function EventDetails() {
     }
   };
 
+  console.log("completed : ", completed);
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[80vh]">
@@ -146,10 +180,15 @@ export default function EventDetails() {
     );
   }
 
+  // const isAttending = user
+  //   ? event.attendees.some((a) => a.id === user.id)
+  //   : false;
   const isAttending = user
-    ? event.attendees.some((a) => a.id === user.id)
+    ? event.attendees.some((a: any) => (a.id || a._id) === user.id)
     : false;
-  const isOwner = user && event.createdBy._id.toString() == user.id;
+
+  // const isOwner = user && (event.createdBy._id === user.id || event.createdBy.id === user.id);
+  const isOwner = user && (event.createdBy as any)._id === user.id;
   const isFull = event.attendees.length >= event.maxAttendees;
 
   return (
@@ -170,7 +209,6 @@ export default function EventDetails() {
               <div className="flex space-x-2">
                 <button
                   onClick={() =>
-                    // navigate(`/events/${event._id}/edit?mode=edit`)
                     navigate(`/createEvent/${event._id}?mode=edit`)
                   }
                   className="p-2 text-gray-600 hover:text-indigo-600 rounded-full hover:bg-gray-100"
@@ -219,6 +257,30 @@ export default function EventDetails() {
                     {event?.attendees.length} / {event?.maxAttendees} attendees
                   </span>
                 </div>
+
+                <div className="flex items-center text-gray-600">
+                  <BadgeCheck className="h-5 w-5 mr-3" />
+                  <span className="flex items-center gap-2">
+                    Status:{" "}
+                    <span
+                      className={`px-2 py-1 rounded-full text-sm font-medium ${
+                        completed
+                          ? "bg-green-100 text-green-800"
+                          : "bg-yellow-100 text-yellow-800"
+                      }`}
+                    >
+                      {completed ? "Completed" : "In Progress"}
+                    </span>
+                    {isOwner && (
+                      <input
+                        type="checkbox"
+                        checked={completed}
+                        onChange={handleCompletionChange}
+                        className="ml-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                      />
+                    )}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -240,7 +302,11 @@ export default function EventDetails() {
                 </div>
               </div>
 
-              {user ? (
+              {isOwner ? (
+                <div className="w-full py-3 px-4 rounded-md text-center font-medium bg-green-100 text-green-700">
+                  You are the organizer
+                </div>
+              ) : user ? (
                 <button
                   onClick={handleAttendance}
                   disabled={!user || (isFull && !isAttending)}

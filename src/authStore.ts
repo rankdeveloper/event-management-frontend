@@ -18,6 +18,7 @@ export interface Event {
   maxAttendees: number;
   createdAt: string;
   image: string;
+  completed?: boolean;
 }
 
 interface AuthState {
