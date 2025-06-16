@@ -64,4 +64,31 @@
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
+
+::-webkit-scrollbar {
+  width: 0px;
+}
+
+/* .backgroundImg {
+  background-image: url("./assets/background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  opacity: 90%;
+  filter: drop-shadow(0 0 0.3rem black);
+
+} */
+
+/* .bannerImg {
+  background-image: url("./assets/banner.png");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: auto;
+  opacity: 90%;
+
+} */

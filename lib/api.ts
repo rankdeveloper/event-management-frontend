@@ -3,34 +3,6 @@ import { Event } from "../src/authStore";
 // const api_url = "https://event-management-backend-10tv.onrender.com";
 const api_url = "http://localhost:5000";
 
-// export async function fetchApi(endpoint: string, options: RequestInit = {}) {
-//   try {
-//     const token = localStorage.getItem("authToken");
-//     const response = await fetch(`${api_url}${endpoint}`, {
-//       ...options,
-//       credentials: "include",
-//       headers: {
-//         "Content-Type": "application/json",
-//         Authorization: token ? `Bearer ${token}` : "",
-//         ...options.headers,
-//       },
-//     });
-
-//     const text = await response.text();
-//     const data = text ? JSON.parse(text) : {};
-
-//     if (!response.ok) {
-//       throw new Error(data.message || "Something went wrong");
-//     }
-
-//     return data;
-//   } catch (error) {
-//     if (error instanceof SyntaxError) {
-//       throw new Error("Invalid response from server");
-//     }
-//     throw error;
-//   }
-// }
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   try {
     const token = localStorage.getItem("authToken") || "";
@@ -65,40 +37,6 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
     throw error;
   }
 }
-// export async function fetchApi(endpoint: string, options: RequestInit = {}) {
-//   const token = localStorage.getItem("authToken") || "";
-
-//   console.log("🔍 Sending Token:", token); // Debugging
-
-//   try {
-//     const response = await fetch(`${api_url}${endpoint}`, {
-//       ...options,
-//       credentials: "include",
-//       headers: {
-//         "Content-Type": "application/json",
-//         Authorization: token ? `Bearer ${token}` : "", // Ensure proper format
-//         ...options.headers,
-//       },
-//     });
-
-//     const text = await response.text();
-//     let data;
-//     try {
-//       data = text ? JSON.parse(text) : {};
-//     } catch (err) {
-//       throw new Error("Invalid JSON response from server");
-//     }
-
-//     if (!response.ok) {
-//       throw new Error(data.message || "Something went wrong");
-//     }
-
-//     return data;
-//   } catch (error) {
-//     console.error("Fetch error:", error.message);
-//     throw error;
-//   }
-// }
 
 export const auth = {
   register: (data: { email: string; password: string; username: string }) =>
@@ -143,6 +81,7 @@ export const events = {
       method: "PUT",
       body: data,
     }),
+  getStats: () => fetchApi("/events/stats"),
 
   completedEvent: (id: string, data: { completed: boolean }) =>
     fetchApi(`/events/completed/${id}`, {
