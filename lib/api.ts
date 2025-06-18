@@ -76,7 +76,7 @@ export const events = {
 
   getEvent: (id: string) => fetchApi(`/events/${id}`),
 
-  updateEvent: (id: string, data: Partial<Event>) =>
+  updateEvent: (id: string, data: FormData) =>
     fetchApi(`/events/${id}`, {
       method: "PUT",
       body: data,
