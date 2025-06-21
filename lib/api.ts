@@ -60,6 +60,11 @@ export const auth = {
       method: "PUT",
       body: data,
     }),
+
+  guestSignIn: () =>
+    fetchApi("/user/guest-sign", {
+      method: "POST",
+    }),
 };
 
 export const events = {

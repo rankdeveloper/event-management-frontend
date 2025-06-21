@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { loginFormSchema } from "@/lib/schema";
 
 export default function Login() {
-  const { signIn } = useAuthStore();
+  const { signIn, signInAsGuest } = useAuthStore();
   const navigate = useNavigate();
 
   const formSchema = loginFormSchema;
@@ -27,12 +27,26 @@ export default function Login() {
   const onSubmit = async (data: FormData) => {
     try {
       await signIn(data.email, data.password);
-      toast.success("successfully logged in!");
+      toast.success("Successfully logged in!");
       navigate("/dashboard");
     } catch (error) {
       if (error instanceof Error) {
         const message =
           error.message || "Failed to login , please check  credentials.";
+        toast.error(message);
+      }
+    }
+  };
+
+  const loginGuest = async () => {
+    console.log("guestSign in ");
+    try {
+      await signInAsGuest();
+      toast.success("Successfully logged in as Guest");
+      navigate("/dashboard");
+    } catch (error) {
+      if (error instanceof Error) {
+        const message = error.message || "Failed to login as Guest";
         toast.error(message);
       }
     }
@@ -99,7 +113,10 @@ export default function Login() {
         </form>
 
         <div className="mt-4">
-          <button className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+          <button
+            onClick={loginGuest}
+            className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+          >
             Continue as Guest
           </button>
         </div>

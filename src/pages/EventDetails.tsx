@@ -15,6 +15,7 @@ import {
 import { events } from "../../lib/api";
 import { useAuthStore, Event } from "../authStore";
 import toast from "react-hot-toast";
+import OwnerImage from "@/components/OwnerImage";
 
 export default function EventDetails() {
   const { id } = useParams<{ id: string }>();
@@ -89,6 +90,14 @@ export default function EventDetails() {
       return;
     }
 
+    // Prevent guest users from registering
+    if (user.isGuest) {
+      toast.error(
+        "Guest users cannot register for events. Please create an account to register."
+      );
+      return;
+    }
+
     if (!event) return;
 
     try {
@@ -117,7 +126,12 @@ export default function EventDetails() {
             ...prevEvent,
             attendees: [
               ...prevEvent.attendees,
-              { id: user.id, email: user.email, username: user.username },
+              {
+                id: user.id,
+                email: user.email,
+                username: user.username,
+                pic: user.pic,
+              },
             ],
           };
         });
@@ -294,8 +308,19 @@ export default function EventDetails() {
                     Event Host
                   </h3>
                   <div className="flex items-center">
-                    <div className="bg-indigo-100 rounded-full p-3">
-                      <Users className="h-6 w-6 text-indigo-600" />
+                    <div
+                      className={`${
+                        event?.createdBy?.pic ? " p-0 " : "bg-indigo-100 p-3"
+                      }  rounded-full `}
+                    >
+                      {event?.createdBy?.pic ? (
+                        <OwnerImage
+                          image={event?.createdBy?.pic}
+                          className="h-12 w-12 rounded-full "
+                        />
+                      ) : (
+                        <Users className="h-6 w-6 text-indigo-600" />
+                      )}
                     </div>
                     <div className="ml-4">
                       <p className="text-gray-900 font-medium">
@@ -311,23 +336,29 @@ export default function EventDetails() {
                     You are the organizer
                   </div>
                 ) : user ? (
-                  <button
-                    onClick={handleAttendance}
-                    disabled={!user || (isFull && !isAttending)}
-                    className={`w-full py-3 px-4 rounded-md text-center font-medium ${
-                      isAttending
-                        ? "bg-red-100 text-red-700 hover:bg-red-200"
+                  user.isGuest ? (
+                    <div className="w-full py-3 px-4 rounded-md text-center font-medium bg-yellow-100 text-yellow-700">
+                      Guest users cannot register for events
+                    </div>
+                  ) : (
+                    <button
+                      onClick={handleAttendance}
+                      disabled={!user || (isFull && !isAttending)}
+                      className={`w-full py-3 px-4 rounded-md text-center font-medium ${
+                        isAttending
+                          ? "bg-red-100 text-red-700 hover:bg-red-200"
+                          : isFull
+                          ? "bg-gray-100 text-gray-500 cursor-not-allowed"
+                          : "bg-indigo-600 text-white hover:bg-indigo-700"
+                      }`}
+                    >
+                      {isAttending
+                        ? "Cancel Registration"
                         : isFull
-                        ? "bg-gray-100 text-gray-500 cursor-not-allowed"
-                        : "bg-indigo-600 text-white hover:bg-indigo-700"
-                    }`}
-                  >
-                    {isAttending
-                      ? "Cancel Registration"
-                      : isFull
-                      ? "Event is Full"
-                      : "Register for Event"}
-                  </button>
+                        ? "Event is Full"
+                        : "Register for Event"}
+                    </button>
+                  )
                 ) : (
                   <Link
                     to="/login"
@@ -349,7 +380,15 @@ export default function EventDetails() {
                           className="flex g-1 items-center text-gray-600"
                         >
                           <div className="bg-gray-100 rounded-full p-2">
-                            <Users className="h-4 w-4" />
+                            {attendee?.pic ? (
+                              <img
+                                src={attendee?.pic}
+                                alt={attendee?.username}
+                                className="h-8 w-8 hover:scale-150 transition-all rounded-full"
+                              />
+                            ) : (
+                              <Users className="h-4 w-4" />
+                            )}
                           </div>
                           <span className="">{attendee?.username || "-"}</span>
                         </div>

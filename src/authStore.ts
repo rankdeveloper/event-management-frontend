@@ -6,6 +6,7 @@ export interface User {
   email: string;
   username: string;
   pic?: string;
+  isGuest?: boolean;
 }
 export interface Event {
   _id: string;
@@ -73,7 +74,9 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   signInAsGuest: async () => {
-    await useAuthStore.getState().signIn("guest@example.com", "guest123");
+    const { token } = await auth.guestSignIn();
+    localStorage.setItem("authToken", token);
+    await useAuthStore.getState().checkUser();
   },
 
   signOut: async () => {

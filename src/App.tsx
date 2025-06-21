@@ -13,6 +13,8 @@ import Home from "./pages/Home";
 import EditProfile from "./pages/EditProfile";
 import Dashboard from "./pages/Dashboard";
 import Events from "./pages/Events";
+import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 export default function App() {
   const { checkUser } = useAuthStore();
@@ -30,13 +32,35 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/createEvent/:id" element={<CreateEvent />} />
-            <Route path="/createEvent" element={<CreateEvent />} />
+            <Route
+              path="/createEvent/:id"
+              element={
+                <ProtectedRoute
+                  preventGuests={true}
+                  guestMessage="Guest users cannot create or edit events. Please create an account."
+                >
+                  <CreateEvent />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/createEvent"
+              element={
+                <ProtectedRoute
+                  preventGuests={true}
+                  guestMessage="Guest users cannot create events. Please create an account."
+                >
+                  <CreateEvent />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/events/:id" element={<EventDetails />} />
 
             <Route path="/profile/edit" element={<EditProfile />} />
             <Route path="/events" element={<Events />} />
             <Route path="/dashboard" element={<Dashboard />} />
+
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
         <Toaster position="top-right" />

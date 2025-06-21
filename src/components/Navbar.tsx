@@ -24,12 +24,18 @@ export default function Navbar() {
                 >
                   Dashboard
                 </Link>
-                <Link
-                  to="/createEvent"
-                  className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
-                >
-                  Create Event
-                </Link>
+                {user.isGuest ? (
+                  <span className="bg-gray-400 text-gray-500 px-4 py-2 rounded-md text-sm font-medium cursor-not-allowed">
+                    Create Event
+                  </span>
+                ) : (
+                  <Link
+                    to="/createEvent"
+                    className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
+                  >
+                    Create Event
+                  </Link>
+                )}
                 <button
                   onClick={() => signOut()}
                   className="flex items-center space-x-1 text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
