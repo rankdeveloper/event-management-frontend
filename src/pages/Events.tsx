@@ -36,9 +36,9 @@ export default function Events() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Upcoming Events</h1>
+    <div className="max-w-7xl mx-auto px-4  sm:px-6 lg:px-8 py-8 h-[90vh] flex flex-col ">
+      <div className="sticky top-0 z-10 bg-white flex justify-between items-center  mt-0 w-full py-4">
+        <h1 className=" text-2xl font-bold text-gray-900">Upcoming Events</h1>
         {/* <Link
           to="/createEvent"
           className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
@@ -47,12 +47,12 @@ export default function Events() {
         </Link> */}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="overflow-y-auto flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 ">
         {eventsList.map((event) => (
           <Link
             key={event._id}
             to={`/events/${event._id}`}
-            className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"
+            className="bg-white shadow-md  hover:shadow-lg transition-shadow duration-200 hover:border-indigo-600 hover:border-2 border-2 border-transparent"
           >
             <div className="h-[200px] w-full shadow  overflow-hidden">
               <img

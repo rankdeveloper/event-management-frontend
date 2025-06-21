@@ -192,167 +192,172 @@ export default function EventDetails() {
   const isFull = event.attendees.length >= event.maxAttendees;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <Link
-        to="/dashboard"
-        className="inline-flex items-center text-indigo-600 hover:text-indigo-700 mb-6"
-      >
-        <ArrowLeft className="h-5 w-5 mr-2" />
-        Back to Dashboard
-      </Link>
+    <div className="pt-0 sm:!pt-4 xl:!pt-20 h-full">
+      <div className="md:max-w-3xl xl:max-w-6xl max-w-full mx-auto  px-4 md:py-8 xl:py-16 h-full ">
+        <Link
+          to="/dashboard"
+          className="inline-flex items-center text-indigo-600 hover:text-indigo-700 mb-6"
+        >
+          <ArrowLeft className="h-5 w-5 mr-2" />
+          Back to Dashboard
+        </Link>
 
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="p-6">
-          <div className="flex justify-between items-start mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">{event.title}</h1>
-            {isOwner && (
-              <div className="flex space-x-2">
-                <button
-                  onClick={() =>
-                    navigate(`/createEvent/${event._id}?mode=edit`)
-                  }
-                  className="p-2 text-gray-600 hover:text-indigo-600 rounded-full hover:bg-gray-100"
-                >
-                  <Edit className="h-5 w-5" />
-                </button>
-                <button
-                  onClick={handleDelete}
-                  disabled={deleting}
-                  className="p-2 text-gray-600 hover:text-red-600 rounded-full hover:bg-gray-100"
-                >
-                  <Trash2 className="h-5 w-5" />
-                </button>
-              </div>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              <div className="prose max-w-none">
-                <p className="text-gray-600">{event?.description || "-"}</p>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center text-gray-600">
-                  <Calendar className="h-5 w-5 mr-3" />
-                  <span>
-                    {format(new Date(event.date), "EEEE, MMMM d, yyyy")}
-                  </span>
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="p-6">
+            <div className="flex justify-between items-start mb-6">
+              <h1 className="text-3xl font-bold text-gray-900">
+                {event.title}
+              </h1>
+              {isOwner && (
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() =>
+                      navigate(`/createEvent/${event._id}?mode=edit`)
+                    }
+                    className="p-2 text-gray-600 hover:text-indigo-600 rounded-full hover:bg-gray-100"
+                  >
+                    <Edit className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    disabled={deleting}
+                    className="p-2 text-gray-600 hover:text-red-600 rounded-full hover:bg-gray-100"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
                 </div>
-                <div className="flex items-center text-gray-600">
-                  <Clock className="h-5 w-5 mr-3" />
-                  <span>{format(new Date(event.date), "h:mm a")}</span>
-                </div>
-                <div className="flex items-center text-gray-600">
-                  <MapPin className="h-5 w-5 mr-3" />
-                  <span>{event?.location || "-"}</span>
-                </div>
-                <div className="flex items-center text-gray-600">
-                  <Tag className="h-5 w-5 mr-3" />
-                  <span>{event?.category || "-"}</span>
-                </div>
-                <div className="flex items-center text-gray-600">
-                  <Users className="h-5 w-5 mr-3" />
-                  <span>
-                    {event?.attendees.length} / {event?.maxAttendees} attendees
-                  </span>
-                </div>
-
-                <div className="flex items-center text-gray-600">
-                  <BadgeCheck className="h-5 w-5 mr-3" />
-                  <span className="flex items-center gap-2">
-                    Status:{" "}
-                    <span
-                      className={`px-2 py-1 rounded-full text-sm font-medium ${
-                        completed
-                          ? "bg-green-100 text-green-800"
-                          : "bg-yellow-100 text-yellow-800"
-                      }`}
-                    >
-                      {completed ? "Completed" : "In Progress"}
-                    </span>
-                    {isOwner && (
-                      <input
-                        type="checkbox"
-                        checked={completed}
-                        onChange={handleCompletionChange}
-                        className="ml-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                      />
-                    )}
-                  </span>
-                </div>
-              </div>
+              )}
             </div>
 
-            <div className="space-y-6">
-              <div className="bg-gray-50 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Event Host
-                </h3>
-                <div className="flex items-center">
-                  <div className="bg-indigo-100 rounded-full p-3">
-                    <Users className="h-6 w-6 text-indigo-600" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-6">
+                <div className="prose max-w-none">
+                  <p className="text-gray-600">{event?.description || "-"}</p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center text-gray-600">
+                    <Calendar className="h-5 w-5 mr-3" />
+                    <span>
+                      {format(new Date(event.date), "EEEE, MMMM d, yyyy")}
+                    </span>
                   </div>
-                  <div className="ml-4">
-                    <p className="text-gray-900 font-medium">
-                      {event?.createdBy.username || "-"}
-                    </p>
-                    <p className="text-gray-500 text-sm">Organizer</p>
+                  <div className="flex items-center text-gray-600">
+                    <Clock className="h-5 w-5 mr-3" />
+                    <span>{format(new Date(event.date), "h:mm a")}</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <MapPin className="h-5 w-5 mr-3" />
+                    <span>{event?.location || "-"}</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <Tag className="h-5 w-5 mr-3" />
+                    <span>{event?.category || "-"}</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <Users className="h-5 w-5 mr-3" />
+                    <span>
+                      {event?.attendees.length} / {event?.maxAttendees}{" "}
+                      attendees
+                    </span>
+                  </div>
+
+                  <div className="flex items-center text-gray-600">
+                    <BadgeCheck className="h-5 w-5 mr-3" />
+                    <span className="flex items-center gap-2">
+                      Status:{" "}
+                      <span
+                        className={`px-2 py-1 rounded-full text-sm font-medium ${
+                          completed
+                            ? "bg-green-100 text-green-800"
+                            : "bg-yellow-100 text-yellow-800"
+                        }`}
+                      >
+                        {completed ? "Completed" : "In Progress"}
+                      </span>
+                      {isOwner && (
+                        <input
+                          type="checkbox"
+                          checked={completed}
+                          onChange={handleCompletionChange}
+                          className="ml-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                        />
+                      )}
+                    </span>
                   </div>
                 </div>
               </div>
 
-              {isOwner ? (
-                <div className="w-full py-3 px-4 rounded-md text-center font-medium bg-green-100 text-green-700">
-                  You are the organizer
-                </div>
-              ) : user ? (
-                <button
-                  onClick={handleAttendance}
-                  disabled={!user || (isFull && !isAttending)}
-                  className={`w-full py-3 px-4 rounded-md text-center font-medium ${
-                    isAttending
-                      ? "bg-red-100 text-red-700 hover:bg-red-200"
-                      : isFull
-                      ? "bg-gray-100 text-gray-500 cursor-not-allowed"
-                      : "bg-indigo-600 text-white hover:bg-indigo-700"
-                  }`}
-                >
-                  {isAttending
-                    ? "Cancel Registration"
-                    : isFull
-                    ? "Event is Full"
-                    : "Register for Event"}
-                </button>
-              ) : (
-                <Link
-                  to="/login"
-                  className="block w-full py-3 px-4 rounded-md text-center font-medium bg-indigo-600 text-white hover:bg-indigo-700"
-                >
-                  Sign in to Register
-                </Link>
-              )}
-
-              {event.attendees.length > 0 && (
-                <div>
+              <div className="space-y-6">
+                <div className="bg-gray-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    Attendees
+                    Event Host
                   </h3>
-                  <div className=" flex flex-wrap gap-3 justify-content-center items-center">
-                    {event?.attendees.map((attendee) => (
-                      <div
-                        key={attendee.id}
-                        className="flex g-1 items-center text-gray-600"
-                      >
-                        <div className="bg-gray-100 rounded-full p-2">
-                          <Users className="h-4 w-4" />
-                        </div>
-                        <span className="">{attendee?.username || "-"}</span>
-                      </div>
-                    ))}
+                  <div className="flex items-center">
+                    <div className="bg-indigo-100 rounded-full p-3">
+                      <Users className="h-6 w-6 text-indigo-600" />
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-gray-900 font-medium">
+                        {event?.createdBy.username || "-"}
+                      </p>
+                      <p className="text-gray-500 text-sm">Organizer</p>
+                    </div>
                   </div>
                 </div>
-              )}
+
+                {isOwner ? (
+                  <div className="w-full py-3 px-4 rounded-md text-center font-medium bg-green-100 text-green-700">
+                    You are the organizer
+                  </div>
+                ) : user ? (
+                  <button
+                    onClick={handleAttendance}
+                    disabled={!user || (isFull && !isAttending)}
+                    className={`w-full py-3 px-4 rounded-md text-center font-medium ${
+                      isAttending
+                        ? "bg-red-100 text-red-700 hover:bg-red-200"
+                        : isFull
+                        ? "bg-gray-100 text-gray-500 cursor-not-allowed"
+                        : "bg-indigo-600 text-white hover:bg-indigo-700"
+                    }`}
+                  >
+                    {isAttending
+                      ? "Cancel Registration"
+                      : isFull
+                      ? "Event is Full"
+                      : "Register for Event"}
+                  </button>
+                ) : (
+                  <Link
+                    to="/login"
+                    className="block w-full py-3 px-4 rounded-md text-center font-medium bg-indigo-600 text-white hover:bg-indigo-700"
+                  >
+                    Sign in to Register
+                  </Link>
+                )}
+
+                {event.attendees.length > 0 && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                      Attendees
+                    </h3>
+                    <div className=" flex flex-wrap gap-3 justify-content-center items-center">
+                      {event?.attendees.map((attendee) => (
+                        <div
+                          key={attendee.id}
+                          className="flex g-1 items-center text-gray-600"
+                        >
+                          <div className="bg-gray-100 rounded-full p-2">
+                            <Users className="h-4 w-4" />
+                          </div>
+                          <span className="">{attendee?.username || "-"}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

@@ -7,12 +7,12 @@ export default function Navbar() {
   console.log("user : ", user);
 
   return (
-    <nav className="bg-white shadow-lg fixed w-full ">
-      <div className="container mx-auto px-4">
+    <nav className="bg-white shadow-md  fixed w-full z-50 ">
+      <div className="mx-auto px-4 xl:px-16">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center space-x-2">
             <Calendar className="h-6 w-6 text-indigo-600" />
-            <span className="font-bold text-xl text-gray-900">eventCenter</span>
+            <span className="font-bold text-xl text-gray-900">Evenza</span>
           </Link>
 
           <div className="flex items-center space-x-4">

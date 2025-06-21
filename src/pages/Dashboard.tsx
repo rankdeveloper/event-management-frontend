@@ -84,7 +84,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <div className="w-full grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-3 pt-10  gap-4 h-[90vh]">
+      <div className="w-full grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-3 pt-10  gap-4 h-[90vh]  px-4 xl:px-20">
         <div className="col-span-1 md:col-span-2 2xl:col-span-2 flex flex-col h-full  rounded-md px-2 py-4 shadow ">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-white p-4 rounded-lg shadow-md border-l-4 border-indigo-500">

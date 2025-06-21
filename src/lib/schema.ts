@@ -23,6 +23,19 @@ export const loginFormSchema = z.object({
     .min(6, "Password must be at least 6 characters"),
 });
 
+export const updateProfileSchema = z.object({
+  username: z
+    .string()
+    .min(1, "Username is required")
+    .min(3, "Username must be atleast 3 characters"),
+  pic: z
+    .any()
+    .refine((file) => file instanceof File || typeof file === "string", {
+      message: "Image is required",
+    })
+    .optional(),
+});
+
 export const createEventFormSchema = z.object({
   title: z
     .string()

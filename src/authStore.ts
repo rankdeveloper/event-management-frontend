@@ -5,6 +5,7 @@ export interface User {
   id: string;
   email: string;
   username: string;
+  pic?: string;
 }
 export interface Event {
   _id: string;

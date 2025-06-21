@@ -83,7 +83,7 @@ export default function Login() {
                   errors.password ? "border-red-500" : " border-gray-300"
                 } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
               />
-              <p className="text-sm text-red-500">{errors.email?.message}</p>
+              <p className="text-sm text-red-500">{errors.password?.message}</p>
             </div>
           </div>
 

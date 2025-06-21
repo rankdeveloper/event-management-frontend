@@ -2,11 +2,11 @@ import { Link } from "react-router-dom";
 import { Calendar, Users, MapPin } from "lucide-react";
 import avatar from "../assets/avatar.jpg";
 import image1 from "../assets/image1.png";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 
 export default function Home() {
-  const parent = {
-    initial: { opacity: 0, delay: 3 },
+  const parent: Variants = {
+    initial: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
@@ -18,7 +18,7 @@ export default function Home() {
     },
   };
 
-  const child = {
+  const child: Variants = {
     initial: { opacity: 0, x: -50 },
     visible: {
       opacity: 1,
@@ -68,7 +68,7 @@ export default function Home() {
               </Link>
             </div>
 
-            <div className="w-[90%] sm:w-[15%] border border-indigo-400 text-black bg-white hover:bg-indigo-300">
+            <div className="w-[90%] sm:w-[20%] border border-indigo-400 text-black bg-white hover:bg-indigo-300">
               <Link
                 to="/register"
                 className="inline-flex items-center px-6 py-3  text-base font-medium rounded-md "
@@ -81,20 +81,19 @@ export default function Home() {
 
         {/* //types of events */}
 
-        <div className="mb-12 mt-4 sm:px-16 px-2">
+        <div className="w-full mb-12 mt-4 sm:px-16 px-2">
           <motion.div
             variants={parent}
             initial="initial"
             key="events-types"
-            whileInView="visible"
             transition={{ duration: 0.5, type: "spring", stiffness: 120 }}
-            className="grid grid-cols-1 sm:grid-cols-4  gap-4 "
+            className="grid grid-cols-1 md:grid-cols-3  sm:grid-cols-4  gap-4 "
           >
-            {[1, 2, 3, 4].map((item, i) => (
+            {[1, 2, 3].map((_, i) => (
               <motion.div
                 variants={child}
                 key={i}
-                className="h-[250px] w-full sm:w-[350px] object-cover relative"
+                className="h-[250px] md:h-[200px]  w-full  sm:w-[250px] md:w-[300px]  xl:w-[350px] object-cover relative"
               >
                 <img
                   src={image1}

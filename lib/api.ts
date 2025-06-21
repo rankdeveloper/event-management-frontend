@@ -55,10 +55,10 @@ export const auth = {
 
   getMe: () => fetchApi("/user/me", { method: "GET" }),
 
-  updateUser: (data: { username: string }) =>
+  updateUser: (data: FormData) =>
     fetchApi("/user/update", {
       method: "PUT",
-      body: JSON.stringify(data),
+      body: data,
     }),
 };
 
