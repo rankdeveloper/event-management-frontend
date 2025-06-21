@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserRound as UserIcon, UserPen } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -11,40 +11,53 @@ import { updateProfileSchema } from "@/lib/schema";
 import ErrorMessage from "@/components/ErrorMessage";
 
 const formSchema = updateProfileSchema;
-
 type FormType = z.infer<typeof formSchema>;
 
 export default function EditProfile() {
   const user = useAuthStore((state) => state.user);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(user?.pic || null);
   const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
     setValue,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isValid },
+
+    reset,
   } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
-      pic: "",
+      pic: undefined,
     },
+    mode: "onChange",
   });
 
+  useEffect(() => {
+    if (user) {
+      reset({
+        username: user.username || "",
+        pic: undefined,
+      });
+      setPreview(user.pic || null);
+    }
+  }, [user, reset]);
+
   const onSubmit: SubmitHandler<FormType> = async (data) => {
-    console.log("data : ", data);
+    console.log("onSubmit called with data:", data);
 
     if (!user) {
       toast.error("You must be logged in to update your profile");
       return;
     }
+
     const payload = new FormData();
     payload.append("username", data.username);
-    if (typeof data.pic === "string") {
+
+    // Only append pic if it exists and is a File
+    if (data.pic && data.pic instanceof File) {
       payload.append("pic", data.pic);
-    } else {
-      payload.append("pic", data.pic!);
     }
 
     try {
@@ -68,11 +81,10 @@ export default function EditProfile() {
           <div>
             <UserPen className="h-10 w-10 text-indigo-600" />
           </div>
-          {/* <div className="flex flex-col items-center"> */}
+
           <h1 className="text-lg font-bold text-center text-gray-900 ">
             Edit Profile
           </h1>
-          {/* </div> */}
         </div>
 
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
@@ -91,7 +103,6 @@ export default function EditProfile() {
                 type="file"
                 accept="image/*"
                 className="absolute inset-0 opacity-0 cursor-pointer"
-                {...register("pic")}
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) {
@@ -122,7 +133,7 @@ export default function EditProfile() {
 
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !isValid}
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
           >
             {isSubmitting ? "Updating..." : "Update Profile"}

@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { Calendar, MapPin, Users } from "lucide-react";
@@ -7,27 +6,26 @@ import { Event } from "../authStore";
 import image1 from "../assets/image1.png";
 
 import toast from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Events() {
-  const [eventsList, setEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    data: eventsData,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["events"],
+    queryFn: events.getEvents,
+    refetchOnWindowFocus: true,
+  });
 
-  useEffect(() => {
-    fetchEvents();
-  }, []);
+  if (error) {
+    toast.error("Error fetching events");
+  }
 
-  const fetchEvents = async () => {
-    try {
-      const data = await events.getEvents();
-      setEvents(data);
-    } catch (error) {
-      toast.error("Error fetching events");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const eventsList = eventsData || [];
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
@@ -39,16 +37,10 @@ export default function Events() {
     <div className="max-w-7xl mx-auto px-4  sm:px-6 lg:px-8 py-8 h-[90vh] flex flex-col ">
       <div className="sticky top-0 z-10 bg-white flex justify-between items-center  mt-0 w-full py-4">
         <h1 className=" text-2xl font-bold text-gray-900">Upcoming Events</h1>
-        {/* <Link
-          to="/createEvent"
-          className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
-        >
-          Create Event
-        </Link> */}
       </div>
 
       <div className="overflow-y-auto flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 ">
-        {eventsList.map((event) => (
+        {eventsList.map((event: Event) => (
           <Link
             key={event._id}
             to={`/events/${event._id}`}
@@ -91,13 +83,13 @@ export default function Events() {
         ))}
       </div>
 
-      {eventsList.length === 0 && (
-        <div className="text-center py-12">
+      {eventsList?.length == 0 && (
+        <div className="h-full flex flex-col justify-center items-center text-center py-12">
           <h3 className="text-lg font-medium text-gray-900 mb-2">
             No events found
           </h3>
           <p className="text-gray-500">
-            <Link to="/creatEvent">
+            <Link to="/createEvent">
               Create your first event to get started!
             </Link>
           </p>

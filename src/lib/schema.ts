@@ -30,9 +30,17 @@ export const updateProfileSchema = z.object({
     .min(3, "Username must be atleast 3 characters"),
   pic: z
     .any()
-    .refine((file) => file instanceof File || typeof file === "string", {
-      message: "Image is required",
-    })
+    .refine(
+      (file) => {
+        // Allow undefined, File, or string
+        return (
+          file === undefined || file instanceof File || typeof file === "string"
+        );
+      },
+      {
+        message: "Image must be a valid file",
+      }
+    )
     .optional(),
 });
 

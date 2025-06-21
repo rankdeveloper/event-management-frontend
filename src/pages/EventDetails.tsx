@@ -195,11 +195,11 @@ export default function EventDetails() {
     <div className="pt-0 sm:!pt-4 xl:!pt-20 h-full">
       <div className="md:max-w-3xl xl:max-w-6xl max-w-full mx-auto  px-4 md:py-8 xl:py-16 h-full ">
         <Link
-          to="/dashboard"
+          to="/events"
           className="inline-flex items-center text-indigo-600 hover:text-indigo-700 mb-6"
         >
           <ArrowLeft className="h-5 w-5 mr-2" />
-          Back to Dashboard
+          Back to Events
         </Link>
 
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">

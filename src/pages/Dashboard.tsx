@@ -24,7 +24,6 @@ export default function Dashboard() {
   const { data } = useQuery({
     queryKey: ["stats-data"],
     queryFn: () => events.getStats(),
-    staleTime: 1000 * 60 * 5,
     retry: 1,
     refetchOnWindowFocus: true,
   });
