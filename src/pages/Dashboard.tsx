@@ -6,17 +6,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 
 import { useQuery } from "@tanstack/react-query";
 import { events } from "../../lib/api";
@@ -154,65 +143,6 @@ export default function Dashboard() {
           />
         </div>
       </div>
-
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button className="rounded-l-3xl rounded-r-none  fixed bottom-4 right-0 bg-indigo-500 hover:bg-indigo-600">
-            Open Chats
-          </Button>
-        </SheetTrigger>
-        <SheetContent className="flex flex-col h-full !w-[80vw] !p-0 ">
-          <SheetHeader className="">
-            <SheetTitle className="px-4 !py-4">Chat Box</SheetTitle>
-            <hr />
-          </SheetHeader>
-
-          <div className="flex-1 overflow-y-auto px-4 !py-0 ">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(
-              (item, i) => (
-                <div
-                  key={i}
-                  className={`${
-                    i % 2 === 0
-                      ? "float-left bg-gray-200"
-                      : "float-right bg-indigo-500"
-                  }   px-3 py-1 rounded-xl mt-3`}
-                >
-                  <p
-                    className={` ${
-                      i % 2 === 0 ? "text-gray-600" : "text-white"
-                    } text-base  font-medium`}
-                  >
-                    {" "}
-                    {item % 2 === 0
-                      ? "Tester : Hello developer , how are you"
-                      : "Developer : i am fine"}{" "}
-                  </p>
-                  <p
-                    className={` ${
-                      i % 2 === 0 ? "text-gray-500" : "text-gray-200"
-                    } text-right text-sm`}
-                  >
-                    6/9/2025 1:15 PM
-                  </p>
-                </div>
-              )
-            )}
-          </div>
-          <hr />
-
-          <SheetFooter className="mt-auto !py-2 !px-4">
-            <div className="w-full flex justify-between  items-center">
-              <SheetClose asChild>
-                <Button variant="outline">Close</Button>
-              </SheetClose>
-              <Button className="bg-indigo-500" type="submit">
-                Send Message
-              </Button>
-            </div>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
     </>
   );
 }

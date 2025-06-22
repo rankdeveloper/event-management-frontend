@@ -16,6 +16,7 @@ import { events } from "../../lib/api";
 import { useAuthStore, Event } from "../authStore";
 import toast from "react-hot-toast";
 import OwnerImage from "@/components/OwnerImage";
+import MessageBox from "@/components/messageBox";
 
 export default function EventDetails() {
   const { id } = useParams<{ id: string }>();
@@ -222,6 +223,14 @@ export default function EventDetails() {
               <h1 className="text-3xl font-bold text-gray-900">
                 {event.title}
               </h1>
+
+              <div className="flex space-x-2">
+                <MessageBox
+                  eventId={id!}
+                  currentUser={user?.username!}
+                  profilePic={user?.pic!}
+                />
+              </div>
               {isOwner && (
                 <div className="flex space-x-2">
                   <button
