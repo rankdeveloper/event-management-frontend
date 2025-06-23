@@ -14,7 +14,7 @@ export default function () {
             <span className="font-bold text-xl text-gray-900">Evenza</span>
           </Link>
           <p className="text-[#bdbdbd] text-sm md:text-base text-center md:text-left ">
-            © 2024 GymFluencer. All rights reserved.
+            © 2025 Evenza. All rights reserved.
           </p>
         </div>
 

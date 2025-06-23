@@ -9,7 +9,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, UserCircle } from "lucide-react";
 import { Message } from "react-hook-form";
 import toast from "react-hot-toast";
 
@@ -89,13 +89,24 @@ export default function MessageBox({
                 }`}
               >
                 <div className="flex gap-2 items-center">
-                  <img
-                    src={profilePic}
-                    alt="profile"
-                    className="h-8 w-8 rounded-full"
-                  />
+                  {profilePic ? (
+                    <img
+                      src={profilePic}
+                      alt="profile"
+                      className="h-8 w-8 rounded-full"
+                    />
+                  ) : (
+                    <UserCircle
+                      className={`${
+                        item.sender === currentUser
+                          ? "text-white"
+                          : "text-indigo-500"
+                      }  h-8 w-8`}
+                    />
+                  )}
+
                   <span
-                    className={`text-base font-medium ${
+                    className={`text-sm font-medium ${
                       item.sender === currentUser
                         ? "text-white"
                         : "text-gray-600"
@@ -106,7 +117,7 @@ export default function MessageBox({
                   </span>
                 </div>
                 <p
-                  className={`text-base font-medium ${
+                  className={`text-base  ${
                     item.sender === currentUser ? "text-white" : "text-gray-600"
                   }`}
                 >

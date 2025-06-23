@@ -76,8 +76,10 @@ export default function Dashboard() {
         <div className="col-span-1 md:col-span-2 2xl:col-span-2 flex flex-col h-full  rounded-md px-2 py-4 shadow ">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-white p-4 rounded-lg shadow-md border-l-4 border-indigo-500">
-              <h3 className="text-lg font-bold">Active Events</h3>
-              <p className="text-2xl font-bold">{data?.activeEvents || "-"}</p>
+              <h3 className="text-lg font-bold">Completed Events</h3>
+              <p className="text-2xl font-bold">
+                {data?.completedEvents || "-"}
+              </p>
             </div>
 
             <div className="bg-white p-4 rounded-lg shadow-md border-l-4 border-indigo-500">
