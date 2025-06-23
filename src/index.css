@@ -95,3 +95,18 @@ body {
   opacity: 90%;
   /* filter: drop-shadow(0 0 0.3rem black); */
 }
+
+.splide__arrow {
+  @apply !bg-indigo-500;
+  @apply hover:bg-indigo-600;
+  @apply !text-white;
+}
+
+.splide__arrow svg {
+  @apply !text-white;
+}
+
+.splide__pagination__page {
+  @apply !bg-indigo-600;
+  @apply hover:bg-indigo-600;
+}
