@@ -1,5 +1,7 @@
-export const parent = {
-  initial: { opacity: 0, delay: 3 },
+import { Variants } from "framer-motion";
+
+export const parent: Variants = {
+  initial: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
@@ -7,11 +9,12 @@ export const parent = {
       stiffness: 120,
       staggerChildren: 0.3,
       delayChildren: 0.2,
+      delay: 0.5,
     },
   },
 };
 
-export const child = {
+export const child: Variants = {
   initial: { opacity: 0, x: -50 },
   visible: {
     opacity: 1,

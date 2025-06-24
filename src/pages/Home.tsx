@@ -6,6 +6,9 @@ import VerticalSlider from "@/components/slider";
 import { EVENTS_GALLERY } from "@/rowData";
 import Footer from "@/components/footer";
 import { child, parent } from "@/lib/animation-variants";
+import Help from "@/components/Help";
+import FAQ from "@/components/faq";
+import TRUSTED_BY from "@/components/trusted-by";
 
 export default function Home() {
   return (
@@ -37,19 +40,10 @@ export default function Home() {
           </motion.p>
 
           <div className="mt-8 flex items-center flex-col sm:flex-row gap-4 sm:gap-10 justify-center ">
-            <div className=" w-[90%] sm:w-[15%] border bg-indigo-600 hover:bg-indigo-700">
+            <div className=" w-[90%] sm:w-[20%] border bg-indigo-600 hover:bg-indigo-700">
               <Link
-                to="/register"
+                to="/createEvent"
                 className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white "
-              >
-                Subscribe
-              </Link>
-            </div>
-
-            <div className="w-[90%] sm:w-[20%] md:w-[15%] border border-indigo-400 text-black bg-white hover:bg-indigo-300">
-              <Link
-                to="/register"
-                className="inline-flex items-center px-6 py-3  text-base font-medium rounded-md "
               >
                 Create Your Event
               </Link>
@@ -64,7 +58,7 @@ export default function Home() {
             key="events-types"
             whileInView="visible"
             transition={{ duration: 0.5, type: "spring", stiffness: 120 }}
-            className="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-4  gap-4 "
+            className="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-4  gap-4"
           >
             {EVENTS_GALLERY.map((item, i) => (
               <motion.div
@@ -103,7 +97,7 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="py-20 backgroundImg px-4 sm:px-6 lg:px-24  ">
+        <div className="py-20 2xl:py-32 backgroundImg px-4 sm:px-6 lg:px-24  ">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
               <div className="text-center border border-indigo-400 rounded-lg filter drop-shadow-lg backdrop-blur py-4">
@@ -145,8 +139,10 @@ export default function Home() {
         </div>
       </div>
 
-      {/* // whats user saying */}
       <VerticalSlider />
+      <Help />
+      <FAQ />
+      <TRUSTED_BY />
       <Footer />
     </div>
   );
