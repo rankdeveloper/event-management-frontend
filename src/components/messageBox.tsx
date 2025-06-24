@@ -55,6 +55,7 @@ export default function MessageBox({
         eventId,
         message,
         sender: currentUser,
+        profilePic,
       });
       setMessage("");
     }
@@ -89,9 +90,9 @@ export default function MessageBox({
                 }`}
               >
                 <div className="flex gap-2 items-center">
-                  {profilePic ? (
+                  {item.profilePic ? (
                     <img
-                      src={profilePic}
+                      src={item.profilePic}
                       alt="profile"
                       className="h-8 w-8 rounded-full"
                     />

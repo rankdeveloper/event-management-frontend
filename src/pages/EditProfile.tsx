@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UserRound as UserIcon, UserPen } from "lucide-react";
+import { UserRound as UserIcon, UserPen, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -88,17 +88,20 @@ export default function EditProfile() {
         </div>
 
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <div className="w-full  flex items-center justify-center">
+          <div className="w-full  flex items-center justify-center relative">
             <div className="relative w-[7rem] h-[7rem] rounded-full border-dotted border border-indigo-600 overflow-hidden flex items-center justify-center mb-2">
               {preview ? (
-                <img
-                  src={preview}
-                  alt="Profile Preview"
-                  className="object-cover w-full h-full"
-                />
+                <>
+                  <img
+                    src={preview}
+                    alt="Profile Preview"
+                    className="object-cover w-full h-full"
+                  />
+                </>
               ) : (
                 <UserIcon className="h-14 w-14 text-indigo-600" />
               )}
+
               <input
                 type="file"
                 accept="image/*"
@@ -112,6 +115,19 @@ export default function EditProfile() {
                 }}
               />
             </div>
+            {preview && (
+              <button
+                type="button"
+                className="absolute top-2 right-14 rounded-full transition-all duration-300 cursor-pointer shadow hover:bg-red-500"
+                onClick={() => {
+                  setPreview(null);
+                  setValue("pic", undefined, { shouldValidate: true });
+                }}
+                aria-label="Remove profile picture"
+              >
+                <X className="text-red-500 text-sm hover:text-white" />
+              </button>
+            )}
           </div>
 
           <div>
