@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { Calendar, Users, MapPin } from "lucide-react";
 
 import { motion } from "framer-motion";
 import VerticalSlider from "@/components/slider";
@@ -9,6 +8,7 @@ import { child, parent } from "@/lib/animation-variants";
 import Help from "@/components/Help";
 import FAQ from "@/components/faq";
 import TRUSTED_BY from "@/components/trusted-by";
+import InfoEvent from "@/components/events-info";
 
 export default function Home() {
   return (
@@ -97,46 +97,7 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="py-20 2xl:py-32 backgroundImg px-4 sm:px-6 lg:px-24  ">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
-              <div className="text-center border border-indigo-400 rounded-lg filter drop-shadow-lg backdrop-blur py-4">
-                <div className="flex justify-center">
-                  <Calendar className="h-12 w-12 text-indigo-600" />
-                </div>
-                <h3 className="mt-4 text-lg font-medium text-white">
-                  Create Events
-                </h3>
-                <p className="mt-2 text-base text-white">
-                  Easily create and manage your events with our intuitive
-                  interface.
-                </p>
-              </div>
-              <div className="text-center border border-indigo-400 rounded-lg filter drop-shadow-lg backdrop-blur py-4 ">
-                <div className="flex justify-center">
-                  <Users className="h-12 w-12 text-indigo-600" />
-                </div>
-                <h3 className="mt-4 text-lg font-medium text-white">
-                  Connect with Others
-                </h3>
-                <p className="mt-2 text-base text-white">
-                  Join events and connect with people who share your interests.
-                </p>
-              </div>
-              <div className="text-center border border-indigo-400 rounded-lg filter drop-shadow-lg backdrop-blur py-4 ">
-                <div className="flex justify-center">
-                  <MapPin className="h-12 w-12 text-indigo-600" />
-                </div>
-                <h3 className="mt-4 text-lg font-medium text-white">
-                  Find Local Events
-                </h3>
-                <p className="mt-2 text-base text-white">
-                  Discover events happening in your area and get involved.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <InfoEvent />
       </div>
 
       <VerticalSlider />

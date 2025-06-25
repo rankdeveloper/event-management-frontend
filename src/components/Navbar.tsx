@@ -1,8 +1,17 @@
-import { Link } from "react-router-dom";
-import { Calendar, LogIn, LogOut, UserPlus, Menu, X } from "lucide-react";
+import { Link, NavLink } from "react-router-dom";
+import {
+  Calendar,
+  LogIn,
+  LogOut,
+  UserPlus,
+  Menu,
+  X,
+  UserCircle,
+} from "lucide-react";
 import { useAuthStore } from "../authStore";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import profile from "../assets/avatar.jpg";
 
 export default function Navbar() {
   const { user, signOut } = useAuthStore();
@@ -31,18 +40,30 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
               <>
-                <Link
+                <NavLink
                   to="/dashboard"
-                  className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+                  className={({ isActive }) =>
+                    `  px-3 py-2 rounded-md text-sm font-medium ${
+                      isActive
+                        ? "text-indigo-600"
+                        : "text-gray-700 hover:text-indigo-600"
+                    } `
+                  }
                 >
                   Dashboard
-                </Link>
-                <Link
+                </NavLink>
+                <NavLink
                   to="/createEvent"
-                  className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
+                  className={({ isActive }) =>
+                    `px-4 py-2 rounded-md text-sm font-medium ${
+                      isActive
+                        ? " text-indigo-500"
+                        : " text-gray-700 hover:text-indigo-500"
+                    }`
+                  }
                 >
                   Create Event
-                </Link>
+                </NavLink>
                 <button
                   onClick={() => signOut()}
                   className="flex items-center space-x-1 text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
@@ -50,23 +71,48 @@ export default function Navbar() {
                   <LogOut className="h-4 w-4" />
                   <span>Sign Out</span>
                 </button>
+
+                <NavLink
+                  to="profile/edit"
+                  className="flex items-center space-x-1 text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  {user.pic ? (
+                    <img
+                      src={profile}
+                      alt="profile"
+                      className="2xl:h-10 sm:h-8  2xl:w-10 sm:w-8 rounded-full"
+                    />
+                  ) : (
+                    <UserCircle className="text-indigo-500 h-8 w-8 2xl:h-10 2xl:w-10" />
+                  )}
+                </NavLink>
               </>
             ) : (
               <>
-                <Link
+                <NavLink
                   to="/login"
-                  className="flex items-center space-x-1 text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+                  className={({ isActive }) =>
+                    `flex items-center space-x-1  hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium ${
+                      isActive ? "text-indigo-600" : "text-gray-700"
+                    }`
+                  }
                 >
                   <LogIn className="h-4 w-4" />
                   <span>Sign In</span>
-                </Link>
-                <Link
+                </NavLink>
+                <NavLink
                   to="/register"
-                  className="flex items-center space-x-1 bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
+                  className={({ isActive }) =>
+                    `flex items-center space-x-1  px-4 py-2 rounded-md text-sm font-medium  ${
+                      isActive
+                        ? " bg-white text-indigo-600 border border-indigo-600 "
+                        : "text-white bg-indigo-600 hover:bg-indigo-700"
+                    }`
+                  }
                 >
                   <UserPlus className="h-4 w-4" />
                   <span>Sign Up</span>
-                </Link>
+                </NavLink>
               </>
             )}
           </div>
@@ -104,6 +150,25 @@ export default function Navbar() {
                   >
                     Create Event
                   </Link>
+
+                  <NavLink
+                    to="profile/edit"
+                    className="flex items-center space-x-1 text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    {user.pic ? (
+                      <>
+                        <img
+                          src={profile}
+                          alt="profile"
+                          className="2xl:h-10 sm:h-8  2xl:w-10 sm:w-8 rounded-full"
+                        />
+                        <span className="ps-2">Profile</span>
+                      </>
+                    ) : (
+                      <UserCircle className="text-indigo-500 h-8 w-8 2xl:h-10 2xl:w-10" />
+                    )}
+                  </NavLink>
+
                   <button
                     onClick={() => {
                       signOut();

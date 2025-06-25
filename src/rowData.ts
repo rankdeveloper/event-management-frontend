@@ -11,6 +11,8 @@ import {
   faAirbnb,
   faFacebook,
 } from "@fortawesome/free-brands-svg-icons";
+
+import { Calendar, Users, MapPin } from "lucide-react";
 export const categories = [
   "Sports",
   "Music",
@@ -105,5 +107,25 @@ export const trustedBy_icons = [
     name: "Facebook",
     icon: faFacebook,
     className: "hover:text-blue-500 transition-all duration-300",
+  },
+];
+
+export const EventHome = [
+  {
+    title: "Create Events",
+    icon: Calendar,
+    desc: " Easily create and manage your event with our intuitive interface.",
+  },
+
+  {
+    title: "Connect with Others",
+    icon: Users,
+    desc: "Join events and connect with people who share your interests.",
+  },
+
+  {
+    title: "Find Local Events",
+    icon: MapPin,
+    desc: "Discover events happening in your area and get involved.",
   },
 ];

@@ -9,9 +9,11 @@ import toast from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
+import { useIsMobile } from "@/hooks/isMobile";
 
 export default function Events() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const isMobile = useIsMobile();
 
   const {
     data: eventsData,
@@ -94,43 +96,46 @@ export default function Events() {
         ))}
       </div>
 
-      <AnimatePresence>
-        {selectedId && (
-          <motion.div
-            layoutId={selectedId}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-            onClick={() => setSelectedId(null)}
-            initial={{ opacity: 0 }}
-            animate={{
-              opacity: 1,
-              transition: { type: "spring", stiffness: 120, duration: 0.5 },
-            }}
-            exit={{ opacity: 0 }}
-          >
+      {!isMobile && (
+        <AnimatePresence>
+          {selectedId && (
             <motion.div
-              className="bg-white rounded-lg shadow-lg w-full max-w-xl px-4 py-6"
-              onClick={(e) => e.stopPropagation()}
+              layoutId={selectedId}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+              onClick={() => setSelectedId(null)}
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: 1,
+                transition: { type: "spring", stiffness: 120, duration: 0.5 },
+              }}
+              exit={{ opacity: 0 }}
             >
-              {(() => {
-                const event = eventsList.find((e: any) => e._id === selectedId);
-                if (!event) return null;
-                return (
-                  <>
-                    <img
-                      src={event.image || image1}
-                      alt={event.title}
-                      className="h-64 w-full object-cover rounded"
-                    />
-                    <h3 className="text-2xl font-bold mt-4">{event.title}</h3>
-                    <p className="text-gray-600 mt-2">{event.description}</p>
-                  </>
-                );
-              })()}
+              <motion.div
+                className="bg-white rounded-lg shadow-lg w-full max-w-xl px-4 py-6"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {(() => {
+                  const event = eventsList.find(
+                    (e: any) => e._id === selectedId
+                  );
+                  if (!event) return null;
+                  return (
+                    <>
+                      <img
+                        src={event.image || image1}
+                        alt={event.title}
+                        className="h-64 w-full object-cover rounded"
+                      />
+                      <h3 className="text-2xl font-bold mt-4">{event.title}</h3>
+                      <p className="text-gray-600 mt-2">{event.description}</p>
+                    </>
+                  );
+                })()}
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+          )}
+        </AnimatePresence>
+      )}
       {eventsList?.length == 0 && (
         <div className="h-full flex flex-col justify-center items-center text-center py-12">
           <h3 className="text-lg font-medium text-gray-900 mb-2">
