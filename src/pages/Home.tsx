@@ -16,7 +16,7 @@ export default function Home() {
       <div className="w-full  h-full ">
         <div className="text-center py-16 sm:py-20   ">
           <motion.h1
-            initial={{ opacity: 0, y: -50, scale: 0.5 }}
+            initial={{ opacity: 0, y: -50, scale: 0.4 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.5, type: "spring", stiffness: 120 }}
             className="text-2xl uppercase font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl xl:text-7xl px:2 sm:px-32  "
