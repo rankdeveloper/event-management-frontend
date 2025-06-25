@@ -21,7 +21,7 @@ export default function Home() {
             transition={{ duration: 0.5, type: "spring", stiffness: 120 }}
             className="text-2xl uppercase font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl xl:text-7xl px:2 sm:px-32  "
           >
-            Transforming Occasions Into Great Memories
+            Transforming Occasions Into Great Memorie
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: -50, scale: 0.5 }}
