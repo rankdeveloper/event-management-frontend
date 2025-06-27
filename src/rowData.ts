@@ -32,9 +32,9 @@ export const EVENTS_GALLERY = [
 ] as const;
 
 export const SOCIAL_ICONS = [
-  { name: "Twitter", icon: faTwitter },
-  { name: "Linkedin", icon: faLinkedin },
-  { name: "Email", icon: faEnvelope },
+  { name: "Twitter", icon: faTwitter, link: "https://twitter.com/" },
+  { name: "Linkedin", icon: faLinkedin, link: "https://www.linkedin.com/" },
+  { name: "Email", icon: faEnvelope, link: "mailto:iamrankush@gmail.com" },
 ] as const;
 
 export const faq = [

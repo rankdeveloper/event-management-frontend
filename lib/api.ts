@@ -79,7 +79,8 @@ export const events = {
       body: data,
     }),
 
-  getEvents: () => fetchApi("/events"),
+  getEvents: (page = 1, limit = 12) =>
+    fetchApi(`/events?page=${page}&limit=${limit}`),
 
   getEvent: (id: string) => fetchApi(`/events/${id}`),
 
@@ -89,6 +90,7 @@ export const events = {
       body: data,
     }),
   getStats: () => fetchApi("/events/stats"),
+  homeStat: () => fetchApi("/events/home-stat"),
 
   completedEvent: (id: string, data: { completed: boolean }) =>
     fetchApi(`/events/completed/${id}`, {

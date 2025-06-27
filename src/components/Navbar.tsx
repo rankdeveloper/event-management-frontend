@@ -78,7 +78,7 @@ export default function Navbar() {
                 >
                   {user.pic ? (
                     <img
-                      src={profile}
+                      src={user?.pic}
                       alt="profile"
                       className="2xl:h-10 sm:h-8  2xl:w-10 sm:w-8 rounded-full"
                     />
@@ -158,7 +158,7 @@ export default function Navbar() {
                     {user.pic ? (
                       <>
                         <img
-                          src={profile}
+                          src={user?.pic}
                           alt="profile"
                           className="2xl:h-10 sm:h-8  2xl:w-10 sm:w-8 rounded-full"
                         />

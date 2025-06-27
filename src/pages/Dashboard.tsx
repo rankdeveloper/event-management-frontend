@@ -9,8 +9,11 @@ import { Link } from "react-router-dom";
 
 import { useQuery } from "@tanstack/react-query";
 import { events } from "../../lib/api";
+import CounterNumber from "@/components/counter-number";
+import { motion } from "framer-motion";
+import { topToBottomChild, topToBottomParent } from "@/lib/animation-variants";
 export default function Dashboard() {
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["stats-data"],
     queryFn: () => events.getStats(),
     retry: 1,
@@ -19,10 +22,11 @@ export default function Dashboard() {
 
   const options = {
     series: [
-      data?.eventTypes?.length,
-      data?.activeEvents,
-      data?.completedEvents,
-      data?.totalEvents,
+      data?.eventTypes?.length || 0,
+      data?.activeEvents || 0,
+      data?.completedEvents || 0,
+      data?.totalExpiredEvents || 0,
+      data?.totalEvents || 0,
     ],
     chart: {
       width: 380,
@@ -30,9 +34,10 @@ export default function Dashboard() {
       type: "pie" as const,
     },
     labels: [
-      "T. Events Types",
+      "Event Types",
       "Active Events",
       "Completed Events",
+      "Expired Events",
       "Total Events",
     ],
     legend: {
@@ -78,18 +83,20 @@ export default function Dashboard() {
             <div className="bg-white p-4 rounded-lg shadow-md border-l-4 border-indigo-500">
               <h3 className="text-lg font-bold">Completed Events</h3>
               <p className="text-2xl font-bold">
-                {data?.completedEvents || "-"}
+                <CounterNumber value={data?.completedEvents || 0} />
               </p>
             </div>
 
             <div className="bg-white p-4 rounded-lg shadow-md border-l-4 border-indigo-500">
               <h3 className="text-lg font-bold">Total Events</h3>
-              <p className="text-2xl font-bold">{data?.totalEvents || "-"}</p>
+              <p className="text-2xl font-bold">
+                <CounterNumber value={data?.totalEvents || 0} />{" "}
+              </p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow-md border-l-4 border-indigo-500">
               <h3 className="text-lg font-bold">Total Attendees</h3>
               <p className="text-2xl font-bold">
-                {data?.totalAttendees || "-"}
+                <CounterNumber value={data?.totalAttendees || 0} />{" "}
               </p>
             </div>
           </div>
@@ -106,25 +113,36 @@ export default function Dashboard() {
             </div>
             <hr />
 
-            <div className="max-h-[600px] lg:max-h-[300px] overflow-y-scroll  ">
+            <div className="2xl:max-h-[600px] lg:max-h-[300px] overflow-y-scroll  ">
               <Accordion type="multiple">
-                {data?.upComingEvents.map((event: any, i: number) => (
-                  <AccordionItem key={i} value={`item-${i}`}>
-                    <AccordionTrigger>
-                      {event?.title || "-"} ({event?.category}){" "}
-                    </AccordionTrigger>
-                    <AccordionContent className="border-l-2 border-b border-gray-200 p-2">
-                      {event?.description || "-"} <br /> Location :{" "}
-                      {event?.location} <br />
-                      <i>
-                        Date:{" "}
-                        {event?.date
-                          ? new Date(event.date).toLocaleString()
-                          : ""}
-                      </i>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
+                <motion.div
+                  variants={topToBottomParent}
+                  initial="initial"
+                  whileInView="visible"
+                  key="upcoming-events"
+                >
+                  {data?.upComingEvents?.map((event: any, i: number) => (
+                    <motion.div key={i} variants={topToBottomChild}>
+                      <AccordionItem value={`item-${i}`}>
+                        <AccordionTrigger>
+                          <Link to={`/events/${event._id}`}>
+                            {event?.title || "-"} ({event?.category}){" "}
+                          </Link>
+                        </AccordionTrigger>
+                        <AccordionContent className="border-l-2 border-b border-gray-200 p-2">
+                          {event?.description || "-"} <br /> Location :{" "}
+                          {event?.location} <br />
+                          <i>
+                            Date:{" "}
+                            {event?.date
+                              ? new Date(event?.date).toLocaleString()
+                              : ""}
+                          </i>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </motion.div>
+                  ))}
+                </motion.div>
               </Accordion>
             </div>
           </div>
@@ -137,12 +155,18 @@ export default function Dashboard() {
             </h3>
           </div>
 
-          <Chart
-            options={options}
-            series={options.series}
-            type="pie"
-            width="380"
-          />
+          {isLoading ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="text-gray-500">Loading chart...</div>
+            </div>
+          ) : (
+            <Chart
+              options={options}
+              series={options.series}
+              type="pie"
+              width="380"
+            />
+          )}
         </div>
       </div>
     </>

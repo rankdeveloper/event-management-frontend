@@ -9,8 +9,33 @@ import Help from "@/components/Help";
 import FAQ from "@/components/faq";
 import TRUSTED_BY from "@/components/trusted-by";
 import InfoEvent from "@/components/events-info";
+import { useQuery } from "@tanstack/react-query";
+import { events } from "../../lib/api";
+import CounterNumber from "@/components/counter-number";
 
 export default function Home() {
+  const { data, isLoading } = useQuery({
+    queryKey: ["stats-data"],
+    queryFn: () => events.homeStat(),
+    retry: 1,
+    refetchOnWindowFocus: true,
+  });
+
+  const stats = [
+    {
+      number: data?.totalEvents || 0,
+      title: " Total events created",
+    },
+    {
+      number: data?.completedEvents || 0,
+      title: "Total events completed successfully",
+    },
+    {
+      number: data?.totalAttendees || 0,
+      title: "Total attendees",
+    },
+  ];
+
   return (
     <div className="flex flex-col justify-center items-center h-full w-full">
       <div className="w-full  h-full ">
@@ -80,7 +105,7 @@ export default function Home() {
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-8 xl:gap-16 mb-8">
-          {[1, 2, 3].map((_, i) => (
+          {stats.map((item, i) => (
             <div
               key={i}
               className={`w-[80%] sm:w-auto text-center py-2 sm:py-6 px-4 sm:px-8   ${
@@ -88,18 +113,15 @@ export default function Home() {
               } `}
             >
               <h3 className="text-3xl sm:text-4xl 2xl:text-5xl font-bold">
-                100+
+                <CounterNumber value={item.number} />+
               </h3>
-              <p className="text-base mt-2 text-gray-500">
-                Total events completed successfully
-              </p>
+              <p className="text-base mt-2 text-gray-500">{item.title}</p>
             </div>
           ))}
         </div>
 
         <InfoEvent />
       </div>
-
       <VerticalSlider />
       <Help />
       <FAQ />
