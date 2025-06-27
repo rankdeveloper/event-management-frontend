@@ -11,7 +11,6 @@ import {
 import { useAuthStore } from "../authStore";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import profile from "../assets/avatar.jpg";
 
 export default function Navbar() {
   const { user, signOut } = useAuthStore();

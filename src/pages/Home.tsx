@@ -14,7 +14,7 @@ import { events } from "../../lib/api";
 import CounterNumber from "@/components/counter-number";
 
 export default function Home() {
-  const { data, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ["stats-data"],
     queryFn: () => events.homeStat(),
     retry: 1,

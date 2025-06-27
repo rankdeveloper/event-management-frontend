@@ -1,5 +1,3 @@
-// const api_url = "https://ocgg00o40ksg088g4w4gs440.coolify.probir.dev";
-// const api_url = "http://localhost:5000";
 const api_url =
   window.location.hostname === "localhost"
     ? "http://localhost:5000"
