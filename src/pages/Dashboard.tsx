@@ -14,7 +14,7 @@ import { motion } from "framer-motion";
 import { topToBottomChild, topToBottomParent } from "@/lib/animation-variants";
 export default function Dashboard() {
   const { data, isLoading } = useQuery({
-    queryKey: ["stats-data"],
+    queryKey: ["dashboard-data"],
     queryFn: () => events.getStats(),
     retry: 1,
     refetchOnWindowFocus: true,
