@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-
 import { motion } from "framer-motion";
 import VerticalSlider from "@/components/slider";
 import { EVENTS_GALLERY } from "@/rowData";
@@ -41,21 +40,27 @@ export default function Home() {
       <div className="w-full  h-full ">
         <div className="text-center py-16 sm:py-20   ">
           <motion.h1
-            initial={{ opacity: 0, y: -50, scale: 0.5 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.5, type: "spring", stiffness: 120 }}
-            className="text-2xl uppercase font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl xl:text-7xl px:2 sm:px-32  "
-          >
-            Transforming Occasions Into Great Memories
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: -50, scale: 0.5 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
+            initial={{ opacity: 0, scale: 1, y: -20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{
               duration: 0.5,
               type: "spring",
               stiffness: 120,
               delay: 0.5,
+            }}
+            exit={{ opacity: 1, scale: 1 }}
+            className="text-2xl uppercase font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl xl:text-7xl px:2 sm:px-32  "
+          >
+            Transforming Occasions Into Great Memories
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.5,
+              type: "spring",
+              stiffness: 120,
+              delay: 1,
             }}
             className="mt-5 max-w-full sm:max-w-2xl mx-auto text-xl text-gray-500"
           >
@@ -65,14 +70,24 @@ export default function Home() {
           </motion.p>
 
           <div className="mt-8 flex items-center flex-col sm:flex-row gap-4 sm:gap-10 justify-center ">
-            <div className=" w-[90%] sm:w-[20%] border bg-indigo-600 hover:bg-indigo-700">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.75 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                duration: 0.5,
+                type: "spring",
+                stiffness: 120,
+                delay: 1.5,
+              }}
+              className=" w-[90%] sm:w-[20%] border bg-indigo-600 hover:bg-indigo-700"
+            >
               <Link
                 to="/createEvent"
                 className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white "
               >
                 Create Your Event
               </Link>
-            </div>
+            </motion.div>
           </div>
         </div>
 
@@ -81,8 +96,7 @@ export default function Home() {
             variants={parent}
             initial="initial"
             key="events-types"
-            whileInView="visible"
-            transition={{ duration: 0.5, type: "spring", stiffness: 120 }}
+            animate={"visible"}
             className="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-4  gap-4"
           >
             {EVENTS_GALLERY.map((item, i) => (
@@ -104,8 +118,13 @@ export default function Home() {
           </motion.div>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-8 xl:gap-16 mb-8">
-          {stats.map((item, i) => (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ type: "keyframes", stiffness: 120, duration: 1.5 }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-8 xl:gap-16 mb-8"
+        >
+          {stats?.map((item, i) => (
             <div
               key={i}
               className={`w-[80%] sm:w-auto text-center py-2 sm:py-6 px-4 sm:px-8   ${
@@ -118,7 +137,7 @@ export default function Home() {
               <p className="text-base mt-2 text-gray-500">{item.title}</p>
             </div>
           ))}
-        </div>
+        </motion.div>
 
         <InfoEvent />
       </div>

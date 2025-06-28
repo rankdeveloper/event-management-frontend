@@ -5,11 +5,10 @@ export const parent: Variants = {
   visible: {
     opacity: 1,
     transition: {
-      type: "spring",
-      stiffness: 120,
+      delay: 2.5,
+      when: "beforeChildren",
       staggerChildren: 0.3,
-      delayChildren: 0.2,
-      delay: 0.5,
+      delayChildren: 0.3,
     },
   },
 };
@@ -20,8 +19,8 @@ export const child: Variants = {
     opacity: 1,
     x: 0,
     transition: {
-      duration: 0.3,
-      ease: "easeIn",
+      duration: 0.4,
+      ease: "easeInOut",
     },
   },
 };

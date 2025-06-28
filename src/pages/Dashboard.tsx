@@ -114,36 +114,38 @@ export default function Dashboard() {
             <hr />
 
             <div className="2xl:max-h-[600px] lg:max-h-[300px] overflow-y-scroll  ">
-              <Accordion type="multiple">
-                <motion.div
-                  variants={topToBottomParent}
-                  initial="initial"
-                  whileInView="visible"
-                  key="upcoming-events"
-                >
-                  {data?.upComingEvents?.map((event: any, i: number) => (
-                    <motion.div key={i} variants={topToBottomChild}>
-                      <AccordionItem value={`item-${i}`}>
-                        <AccordionTrigger>
-                          <Link to={`/events/${event._id}`}>
-                            {event?.title || "-"} ({event?.category}){" "}
-                          </Link>
-                        </AccordionTrigger>
-                        <AccordionContent className="border-l-2 border-b border-gray-200 p-2">
-                          {event?.description || "-"} <br /> Location :{" "}
-                          {event?.location} <br />
-                          <i>
-                            Date:{" "}
-                            {event?.date
-                              ? new Date(event?.date).toLocaleString()
-                              : ""}
-                          </i>
-                        </AccordionContent>
-                      </AccordionItem>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </Accordion>
+              {data?.upComingEvents.length > 0 && (
+                <Accordion type="multiple">
+                  <motion.div
+                    variants={topToBottomParent}
+                    initial="initial"
+                    whileInView="visible"
+                    key="upcoming-events"
+                  >
+                    {data?.upComingEvents?.map((event: any, i: number) => (
+                      <motion.div key={i} variants={topToBottomChild}>
+                        <AccordionItem value={`item-${i}`}>
+                          <AccordionTrigger>
+                            <Link to={`/events/${event._id}`}>
+                              {event?.title || "-"} ({event?.category}){" "}
+                            </Link>
+                          </AccordionTrigger>
+                          <AccordionContent className="border-l-2 border-b border-gray-200 p-2">
+                            {event?.description || "-"} <br /> Location :{" "}
+                            {event?.location} <br />
+                            <i>
+                              Date:{" "}
+                              {event?.date
+                                ? new Date(event?.date).toLocaleString()
+                                : ""}
+                            </i>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </Accordion>
+              )}
             </div>
           </div>
         </div>

@@ -1,8 +1,14 @@
 import { EventHome } from "@/rowData";
+import { motion } from "framer-motion";
 
 export default function InfoEvent() {
   return (
-    <div className="py-20 2xl:py-32 backgroundImg px-4 sm:px-6 lg:px-24  ">
+    <motion.div
+      initial={{ opacity: 0, y: 100 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ type: "keyframes", stiffness: 120, duration: 1.5 }}
+      className="py-20 2xl:py-32 backgroundImg px-4 sm:px-6 lg:px-24  "
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
           {EventHome.map((item) => {
@@ -24,6 +30,6 @@ export default function InfoEvent() {
           })}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

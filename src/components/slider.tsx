@@ -3,6 +3,7 @@ import Splide from "@splidejs/splide";
 import "@splidejs/splide/dist/css/splide.min.css";
 import avatar from "../assets/avatar.jpg";
 import "../App.css";
+import { motion } from "framer-motion";
 
 export const VerticalSlider = () => {
   useEffect(() => {
@@ -25,7 +26,12 @@ export const VerticalSlider = () => {
   }, []);
 
   return (
-    <div className="splide">
+    <motion.div
+      initial={{ opacity: 0, y: 100 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ type: "keyframes", stiffness: 120, duration: 1.5 }}
+      className="splide"
+    >
       <div className="splide__track !bg-indigo-500">
         <ul className="splide__list">
           {[1, 2, 3].map((item) => (
@@ -55,7 +61,7 @@ export const VerticalSlider = () => {
           ))}
         </ul>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

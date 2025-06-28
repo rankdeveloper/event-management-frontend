@@ -1,8 +1,14 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function Help() {
   return (
-    <div className="sm:min-h-[80vh]   items-center flex justify-end py-4 sm:py-0">
+    <motion.div
+      initial={{ opacity: 0, y: 100 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ type: "keyframes", stiffness: 120, duration: 1.5 }}
+      className="sm:min-h-[80vh]   items-center flex justify-end py-4 sm:py-0"
+    >
       <div className="help sm:h-[80vh] flex items-center justify-between sm:px-0 px-4">
         <div className="ml-0 sm:ml-[60%] flex flex-col justify-between  gap-8">
           <h2 className="text-2xl sm:text-5xl leading-tight font-bold">
@@ -26,6 +32,6 @@ export default function Help() {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
