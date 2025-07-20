@@ -144,7 +144,13 @@ export default function MessageBox({
               <div className="flex items-center flex-col gap-2">
                 <MessageCircle className="text-indigo-500 h-10 w-10" />
                 <h2 className="text-center text-xl text-indigo-500">
-                  No Chats Found
+                  {currentUser === "Guest" ? (
+                    <span className="text-sm text-gray-500">
+                      Please create an account to start chatting
+                    </span>
+                  ) : (
+                    "No Chats Found"
+                  )}
                 </h2>
               </div>
             </div>
