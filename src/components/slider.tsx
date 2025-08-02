@@ -34,7 +34,7 @@ export const VerticalSlider = () => {
     >
       <div className="splide__track !bg-indigo-500">
         <ul className="splide__list">
-          {[1, 2, 3].map((item) => (
+          {[1, 2].map((item) => (
             <div
               key={item}
               className="splide__slide !py-6 text-center flex flex-col items-center !gap-6 bg-indigo-100"
@@ -47,15 +47,15 @@ export const VerticalSlider = () => {
                 />
               </div>
               <p className="text-base px-4 xl:px-24 md:px-20  text-gray-500 font-medium">
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nobis
-                eligendi consectetur excepturi temporibus non atque, doloribus
-                assumenda necessitatibus neque dolorem accusantium, consequuntur
-                pariatur aliquid ipsam. Velit quod sint dolorem dicta.
+                Evenza helped us streamline our event planning from start to
+                finish. The platform is intuitive, reliable, and has made our
+                team's workflow significantly more efficient. Highly recommended
+                for organizers looking to scale smoothly.
               </p>
 
               <div>
-                <h3 className="font-semibold">Kyle Jemmison</h3>
-                <p className="text-gray-500">CEO, Evenza</p>
+                <h3 className="font-semibold">Kyle Davis</h3>
+                <p className="text-gray-500">Linkedin Member, New York</p>
               </div>
             </div>
           ))}

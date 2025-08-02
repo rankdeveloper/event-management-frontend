@@ -47,6 +47,7 @@ export default function MessageBox({
       toast.error(
         "Guest users cannot send messages , Please create an account"
       );
+      setMessage("");
       return;
     }
 
@@ -174,7 +175,7 @@ export default function MessageBox({
               className="bg-indigo-500"
               type="submit"
               onClick={handleSend}
-              disabled={message.trim() === "" || currentUser === "Guest"}
+              disabled={message.trim() === ""}
             >
               Send Message
             </Button>
