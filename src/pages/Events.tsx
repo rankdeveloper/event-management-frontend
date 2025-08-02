@@ -79,44 +79,44 @@ export default function Events() {
           <motion.div
             key={event._id}
             layoutId={event._id}
-            onHoverStart={() => setSelectedId(event._id)}
-            className="bg-white shadow-md  hover:shadow-lg transition-shadow duration-200 hover:border-indigo-600 hover:border-2 border-2 border-transparent"
+            onClick={() => setSelectedId(event._id)}
+            className="bg-white shadow-md  hover:shadow-lg transition-shadow duration-200 hover:border-indigo-600 hover:border-2 border-2 border-transparent "
           >
-            <Link to={`/events/${event._id}`}>
-              <div className="h-[200px] w-full shadow  overflow-hidden">
-                <img
-                  src={event.image || image1}
-                  alt={event.title}
-                  className="h-full w-full object-cover"
-                />
-              </div>
+            {/* <Link to={`/events/${event._id}`}> */}
+            <div className="h-[200px] w-full shadow  overflow-hidden">
+              <img
+                src={event.image || image1}
+                alt={event.title}
+                className="h-full w-full object-cover"
+              />
+            </div>
 
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  {event.title}
-                </h3>
-                <p className="text-gray-600 mb-4 line-clamp-2">
-                  {event.description}
-                </p>
+            <div className="p-6">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                {event.title}
+              </h3>
+              <p className="text-gray-600 mb-4 line-clamp-2">
+                {event.description}
+              </p>
 
-                <div className="space-y-2">
-                  <div className="flex items-center text-gray-500">
-                    <Calendar className="h-5 w-5 mr-2" />
-                    <span>{format(new Date(event.date), "PPP")}</span>
-                  </div>
-                  <div className="flex items-center text-gray-500">
-                    <MapPin className="h-5 w-5 mr-2" />
-                    <span>{event.location}</span>
-                  </div>
-                  <div className="flex items-center text-gray-500">
-                    <Users className="h-5 w-5 mr-2" />
-                    <span>
-                      {event.attendees.length} / {event.maxAttendees} attendees
-                    </span>
-                  </div>
+              <div className="space-y-2">
+                <div className="flex items-center text-gray-500">
+                  <Calendar className="h-5 w-5 mr-2" />
+                  <span>{format(new Date(event.date), "PPP")}</span>
+                </div>
+                <div className="flex items-center text-gray-500">
+                  <MapPin className="h-5 w-5 mr-2" />
+                  <span>{event.location}</span>
+                </div>
+                <div className="flex items-center text-gray-500">
+                  <Users className="h-5 w-5 mr-2" />
+                  <span>
+                    {event.attendees.length} / {event.maxAttendees} attendees
+                  </span>
                 </div>
               </div>
-            </Link>
+            </div>
+            {/* </Link> */}
           </motion.div>
         ))}
 
@@ -158,9 +158,13 @@ export default function Events() {
                           alt={event.title}
                           className="h-64 w-full object-cover rounded"
                         />
-                        <h3 className="text-2xl font-bold mt-4">
-                          {event.title}
-                        </h3>
+                        <div className="flex justify-between items-center mt-3">
+                          <h3 className="text-2xl font-bold mt-4">
+                            {event.title}
+                          </h3>
+                          <span className="text-indigo-600">View more</span>
+                        </div>
+
                         <p className="text-gray-600 mt-2">
                           {event.description}
                         </p>

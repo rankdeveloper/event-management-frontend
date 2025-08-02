@@ -12,6 +12,7 @@ import { events } from "../../lib/api";
 import CounterNumber from "@/components/counter-number";
 import { motion } from "framer-motion";
 import { topToBottomChild, topToBottomParent } from "@/lib/animation-variants";
+import NotFound from "@/components/not-found";
 export default function Dashboard() {
   const { data, isLoading } = useQuery({
     queryKey: ["dashboard-data"],
@@ -113,7 +114,7 @@ export default function Dashboard() {
             </div>
             <hr />
 
-            <div className="2xl:max-h-[600px] lg:max-h-[300px] overflow-y-scroll  ">
+            <div className="2xl:max-h-[600px] lg:max-h-[300px] overflow-y-scroll h-full grow-1 flex flex-col">
               {data?.upComingEvents.length > 0 && (
                 <Accordion type="multiple">
                   <motion.div
@@ -145,6 +146,10 @@ export default function Dashboard() {
                     ))}
                   </motion.div>
                 </Accordion>
+              )}
+
+              {data?.upComingEvents.length == 0 && (
+                <NotFound message="No Upcoming Events" />
               )}
             </div>
           </div>
