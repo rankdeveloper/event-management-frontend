@@ -38,79 +38,85 @@ export default function Home() {
   return (
     <div className="flex flex-col justify-center items-center h-full w-full">
       <div className="w-full  h-full ">
-        <div className="text-center py-16 sm:py-20   ">
-          <motion.h1
-            initial={{ opacity: 0, scale: 1, y: -20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{
-              duration: 0.5,
-              type: "spring",
-              stiffness: 120,
-              delay: 0.5,
-            }}
-            exit={{ opacity: 1, scale: 1 }}
-            className="text-2xl uppercase font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl xl:text-7xl px:2 sm:px-32  "
+        <div className="text-center py-20 sm:py-28 px-4">
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-600 text-sm font-medium px-4 py-1.5 rounded-full mb-6 border border-indigo-100"
           >
-            Transforming Occasions Into Great Memories
+            <span className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse" />
+            Trusted by 10,000+ organizers
+          </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, type: "spring", stiffness: 120, delay: 0.4 }}
+            className="text-4xl font-extrabold text-gray-900 sm:text-6xl lg:text-7xl tracking-tight sm:px-16 leading-tight"
+          >
+            Transforming Occasions Into{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
+              Great Memories
+            </span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.5,
-              type: "spring",
-              stiffness: 120,
-              delay: 1,
-            }}
-            className="mt-5 max-w-full sm:max-w-2xl mx-auto text-xl text-gray-500"
+            transition={{ duration: 0.5, type: "spring", stiffness: 120, delay: 0.8 }}
+            className="mt-6 max-w-2xl mx-auto text-lg text-gray-500 leading-relaxed"
           >
-            Our mission is to make event planning simple, efficient, and
-            stress-free. Evenza helps individuals and teams organize successful
-            events with smart tools and a user-friendly experience.
+            Evenza helps individuals and teams organize successful events with smart tools and a user-friendly experience.
           </motion.p>
-
-          <div className="mt-8 flex items-center flex-col sm:flex-row gap-4 sm:gap-10 justify-center ">
+          <div className="mt-10 flex items-center flex-col sm:flex-row gap-4 justify-center">
             <motion.div
-              initial={{ opacity: 0, scale: 0.75 }}
+              initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                duration: 0.5,
-                type: "spring",
-                stiffness: 120,
-                delay: 1.5,
-              }}
-              className=" w-[90%] sm:w-[20%] border bg-indigo-600 hover:bg-indigo-700"
+              transition={{ duration: 0.4, delay: 1.1 }}
             >
               <Link
                 to="/createEvent"
-                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white "
+                className="inline-flex items-center px-7 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white text-base font-semibold rounded-xl shadow-lg shadow-indigo-200 transition-all hover:-translate-y-0.5"
               >
                 Create Your Event
+              </Link>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: 1.2 }}
+            >
+              <Link
+                to="/events"
+                className="inline-flex items-center px-7 py-3.5 bg-white hover:bg-gray-50 text-gray-700 text-base font-semibold rounded-xl border border-gray-200 shadow-sm transition-all hover:-translate-y-0.5"
+              >
+                Browse Events
               </Link>
             </motion.div>
           </div>
         </div>
 
-        <div className="mb-12 mt-4 sm:px-16 px-2">
+        <div className="mb-12 mt-4 sm:px-16 px-4">
+          <h2 className="text-center text-2xl font-bold text-gray-900 mb-8">Explore Event Categories</h2>
           <motion.div
             variants={parent}
             initial="initial"
             key="events-types"
             animate={"visible"}
-            className="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-4  gap-4"
+            className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4"
           >
             {EVENTS_GALLERY.map((item, i) => (
               <motion.div
                 variants={child}
                 key={i}
-                className="h-[200px] w-full sm:w-[300px]  2xl:w-[400px] 2xl:h-[300px] overflow-hidden object-cover relative rounded-lg"
+                className="relative h-[180px] 2xl:h-[260px] overflow-hidden rounded-2xl group cursor-pointer"
               >
                 <img
                   src={item.url}
                   alt="image"
-                  className="h-full w-full rounded-lg border hover:scale-125 transition-all duration-500 "
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
-                <span className=" bg-white w-1/3  absolute  bottom-5 left-0 right-0 text-center text-indigo-500 uppercase font-bold text-sm mt-2  py-1  rounded-xl mx-auto  ">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <span className="absolute bottom-3 left-0 right-0 text-center text-white font-semibold text-sm uppercase tracking-wide">
                   {item.name}
                 </span>
               </motion.div>

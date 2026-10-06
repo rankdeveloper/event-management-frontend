@@ -1,34 +1,23 @@
 import { useEffect } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Calendar } from "lucide-react";
+import { ArrowLeft, Calendar, ImagePlus } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../authStore";
 import { categories } from "../rowData";
 import { events } from "../../lib/api";
-import { SubmitHandler } from "react-hook-form";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createEventFormSchema } from "@/lib/schema";
 import ErrorMessage from "@/components/ErrorMessage";
 
-const eventSchema = createEventFormSchema;
-
-type EventFormType = z.infer<typeof eventSchema>;
+type EventFormType = z.infer<typeof createEventFormSchema>;
 
 export default function CreateEvent() {
   const user = useAuthStore((state) => state.user);
   const { id } = useParams<{ id: string }>();
-
-  useEffect(() => {
-    if (id) {
-      fetchEventDetails();
-    }
-  }, [id]);
   const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const mode = searchParams.get("mode");
-
+  const mode = new URLSearchParams(location.search).get("mode");
   const navigate = useNavigate();
 
   const {
@@ -37,9 +26,9 @@ export default function CreateEvent() {
     setValue,
     watch,
     reset,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(eventSchema),
+    formState: { errors, isSubmitting },
+  } = useForm<EventFormType>({
+    resolver: zodResolver(createEventFormSchema) as any,
     defaultValues: {
       title: "",
       description: "",
@@ -52,14 +41,16 @@ export default function CreateEvent() {
   });
 
   const selectedImage = watch("image");
-  console.log("selected image : ", selectedImage);
+
+  useEffect(() => {
+    if (id) fetchEventDetails();
+  }, [id]);
 
   const onSubmit: SubmitHandler<EventFormType> = async (data) => {
     if (!user) {
       toast.error("You must be logged in to create an event");
       return;
     }
-
     const payload = new FormData();
     payload.append("title", data.title);
     payload.append("description", data.description);
@@ -67,13 +58,7 @@ export default function CreateEvent() {
     payload.append("date", data.date);
     payload.append("category", data.category);
     payload.append("maxAttendees", data.maxAttendees.toString());
-
-    if (typeof data.image === "string") {
-      payload.append("image", data.image);
-    } else {
-      payload.append("image", data.image);
-    }
-
+    payload.append("image", data.image);
     payload.append("createdBy", user.id);
 
     if (mode === "edit") {
@@ -82,8 +67,9 @@ export default function CreateEvent() {
         toast.success("Event updated successfully!");
         navigate(`/events/${id}`);
       } catch (error) {
-        if (error instanceof Error)
-          toast.error(error.message || "Error updating event");
+        toast.error(
+          error instanceof Error ? error.message : "Error updating event",
+        );
       }
     } else {
       payload.append("attendees", user.id);
@@ -92,10 +78,9 @@ export default function CreateEvent() {
         toast.success("Event created successfully!");
         navigate("/dashboard");
       } catch (error) {
-        if (error instanceof Error) {
-          const message = error.message || "Error creating event";
-          toast.error(message);
-        }
+        toast.error(
+          error instanceof Error ? error.message : "Error creating event",
+        );
       }
     }
   };
@@ -108,7 +93,6 @@ export default function CreateEvent() {
         navigate("/dashboard");
         return;
       }
-
       reset({
         title: event.title,
         description: event.description,
@@ -118,194 +102,176 @@ export default function CreateEvent() {
         maxAttendees: event.maxAttendees,
         image: event.image,
       });
-    } catch (error) {
-      console.error("Error fetching event:", error);
+    } catch {
       toast.error("Error loading event details");
       navigate("/dashboard");
     }
   };
 
+  const inputClass = (hasError: boolean) =>
+    `w-full px-4 py-2.5 border rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${
+      hasError
+        ? "border-red-400 bg-red-50"
+        : "border-gray-200 bg-gray-50 focus:bg-white"
+    }`;
+
   return (
-    <div className="pt-0 sm:!pt-4 xl:!pt-20">
-      <div className="md:max-w-3xl xl:max-w-6xl max-w-full mx-auto  px-4 md:py-8 xl:py-16 h-full ">
+    <div className="pt-20 pb-12 min-h-screen bg-gray-50">
+      <div className="max-w-3xl mx-auto px-4">
         <Link
           to="/dashboard"
-          className="inline-flex items-center text-indigo-600 hover:text-indigo-700 text-sm mb:0 sm:mb-4"
+          className="inline-flex items-center text-sm text-indigo-600 hover:text-indigo-700 mb-6 font-medium"
         >
-          <ArrowLeft className="h-5 w-5 mr-2" />
+          <ArrowLeft className="h-4 w-4 mr-1.5" />
           Back to Dashboard
         </Link>
-        <div className="bg-white rounded-lg shadow-lg px-6 py-8 ">
-          <div className="flex gap-4">
-            <div className="flex items-center justify-center mb-6">
-              <Calendar className="sm:h-12 sm:w-12 h-8 w-8 text-indigo-600" />
+
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-6">
+            <div className="flex items-center gap-3">
+              <div className="bg-white/20 p-2.5 rounded-xl">
+                <Calendar className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-white">
+                  {mode === "edit" ? "Edit Event" : "Create New Event"}
+                </h1>
+                <p className="text-indigo-200 text-sm mt-0.5">
+                  {mode === "edit"
+                    ? "Update your event details"
+                    : "Fill in the details to get started"}
+                </p>
+              </div>
             </div>
-            <h1 className="text-xl sm:text-3xl font-bold text-center text-gray-900 mb-8">
-              Create New Event
-            </h1>
           </div>
 
-          <form className="space-y-6 w-full" onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col sm:flex-row  sm:gap-8 gap-0 justify-center w-full ">
-              <div className="left sm:w-[60%]  w-full">
-                <div>
-                  <label
-                    htmlFor="title"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Event Title
-                  </label>
-                  <input
-                    type="text"
-                    className={`mt-1 block w-full px-3 py-2 border ${
-                      errors?.title?.message
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
-                    {...register("title")}
-                  />
-                  <ErrorMessage message={errors?.title?.message ?? ""} />
-                </div>
-
-                <div className="sm:min-h-[6rem]">
-                  <label
-                    htmlFor="description"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Description
-                  </label>
-                  <textarea
-                    rows={6}
-                    className={`mt-1 block w-full px-3 py-2 border ${
-                      errors?.description?.message
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
-                    {...register("description")}
-                  ></textarea>
-
-                  <ErrorMessage message={errors?.description?.message ?? ""} />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="date"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Date and Time
-                  </label>
-
-                  <input
-                    type="datetime-local"
-                    className={`mt-1 block w-full px-3 py-2 border ${
-                      errors?.date?.message
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
-                    {...register("date")}
-                  />
-                  <ErrorMessage message={errors?.date?.message ?? ""} />
-                </div>
+          <form className="p-8 space-y-6" onSubmit={handleSubmit(onSubmit as any)}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Event Title
+                </label>
+                <input
+                  type="text"
+                  {...register("title")}
+                  placeholder="Give your event a name"
+                  className={inputClass(!!errors.title)}
+                />
+                <ErrorMessage message={errors.title?.message ?? ""} />
               </div>
 
-              <div className="right">
-                <div>
-                  <label
-                    htmlFor="location"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Location
-                  </label>
-                  <input
-                    type="text"
-                    className={`mt-1 block w-full px-3 py-2 border ${
-                      errors?.location?.message
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
-                    {...register("location")}
-                  />
-                  <ErrorMessage message={errors?.location?.message ?? ""} />
-                </div>
-                <div>
-                  <label
-                    htmlFor="Image"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Image
-                  </label>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Description
+                </label>
+                <textarea
+                  rows={4}
+                  {...register("description")}
+                  placeholder="Describe your event..."
+                  className={inputClass(!!errors.description)}
+                />
+                <ErrorMessage message={errors.description?.message ?? ""} />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Date & Time
+                </label>
+                <input
+                  type="datetime-local"
+                  {...register("date")}
+                  className={inputClass(!!errors.date)}
+                />
+                <ErrorMessage message={errors.date?.message ?? ""} />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Location
+                </label>
+                <input
+                  type="text"
+                  {...register("location")}
+                  placeholder="City, venue or online"
+                  className={inputClass(!!errors.location)}
+                />
+                <ErrorMessage message={errors.location?.message ?? ""} />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Category
+                </label>
+                <select
+                  {...register("category")}
+                  className={inputClass(!!errors.category)}
+                >
+                  <option value="">Select a category</option>
+                  {categories.map((cat, i) => (
+                    <option key={i} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+                <ErrorMessage message={errors.category?.message ?? ""} />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Max Attendees
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  {...register("maxAttendees")}
+                  className={inputClass(!!errors.maxAttendees)}
+                />
+                <ErrorMessage message={errors.maxAttendees?.message ?? ""} />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Event Image
+                </label>
+                <label
+                  className={`flex items-center gap-3 cursor-pointer px-4 py-3 border-2 border-dashed rounded-lg transition-colors ${errors.image ? "border-red-400 bg-red-50" : "border-gray-200 hover:border-indigo-400 hover:bg-indigo-50"}`}
+                >
+                  <ImagePlus className="h-5 w-5 text-gray-400" />
+                  <span className="text-sm text-gray-500">
+                    {selectedImage && typeof selectedImage !== "string"
+                      ? (selectedImage as File).name
+                      : typeof selectedImage === "string" && selectedImage
+                        ? "Current image (upload to replace)"
+                        : "Click to upload an image"}
+                  </span>
                   <input
                     type="file"
                     accept="image/*"
-                    className={`mt-1 block w-full px-3 py-2 border ${
-                      errors?.image?.message
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
+                    className="hidden"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) setValue("image", file);
                     }}
                   />
-                  <ErrorMessage
-                    message={errors?.image?.message?.toString() ?? ""}
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="category"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Category
-                  </label>
-                  <select
-                    className={`mt-1 block w-full px-3 py-2 border ${
-                      errors?.category?.message
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
-                    {...register("category")}
-                  >
-                    <option value="">Select a category</option>
-                    {categories.map((category, i) => (
-                      <option key={i} value={category}>
-                        {category}
-                      </option>
-                    ))}
-                  </select>
-
-                  <ErrorMessage message={errors?.category?.message ?? ""} />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="max_attendees"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Maximum Attendees
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    className={`mt-1 block w-full px-3 py-2 border ${
-                      errors?.maxAttendees?.message
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    }  rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
-                    {...register("maxAttendees")}
-                  />
-
-                  <ErrorMessage message={errors?.maxAttendees?.message ?? ""} />
-                </div>
-
-                <button
-                  type="submit"
-                  className="mt-4 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  {mode === "edit" ? "Update Event" : "Create Event"}
-                </button>
+                </label>
+                <ErrorMessage
+                  message={errors.image?.message?.toString() ?? ""}
+                />
               </div>
+            </div>
+
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-3 px-6 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-colors"
+              >
+                {isSubmitting
+                  ? "Saving..."
+                  : mode === "edit"
+                    ? "Update Event"
+                    : "Create Event"}
+              </button>
             </div>
           </form>
         </div>

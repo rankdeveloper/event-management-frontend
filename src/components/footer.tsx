@@ -1,30 +1,85 @@
 import { SOCIAL_ICONS } from "@/rowData";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Calendar } from "lucide-react";
-
 import { Link } from "react-router-dom";
+
+const footerLinks = [
+  { label: "Events", to: "/events" },
+  { label: "Dashboard", to: "/dashboard" },
+  { label: "Create Event", to: "/createEvent" },
+];
 
 export default function Footer() {
   return (
-    <footer className="bg-white mt-auto py-6  md:w-[100%] w-full mx-auto px-4 xl:px-16">
-      <div className=" flex flex-col  md:flex-row justify-between items-center gap-3">
-        <div className="flex flex-col sm:items-start items-center gap-2">
-          <Link to="/" className="flex items-center space-x-2">
-            <Calendar className="h-6 w-6 text-indigo-600" />
-            <span className="font-bold text-xl text-gray-900">Evenza</span>
-          </Link>
-          <p className="text-[#bdbdbd] text-sm md:text-base text-center md:text-left ">
+    <footer className="w-full bg-gray-50 border-t border-gray-100 mt-auto">
+      <div className="max-w-7xl mx-auto px-4 xl:px-16 py-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          <div className="flex flex-col gap-3">
+            <Link to="/" className="flex items-center gap-2 w-fit">
+              <div className="bg-indigo-600 p-1.5 rounded-lg">
+                <Calendar className="h-4 w-4 text-white" />
+              </div>
+              <span className="font-bold text-lg text-gray-900 tracking-tight">
+                Evenza
+              </span>
+            </Link>
+            <p className="text-sm text-gray-500 leading-relaxed max-w-xs">
+              Making event planning simple, efficient, and stress-free for
+              everyone.
+            </p>
+          </div>
+
+          <div>
+            <h4 className="text-sm font-semibold text-gray-900 mb-3">
+              Quick Links
+            </h4>
+            <ul className="space-y-2">
+              {footerLinks.map(({ label, to }) => (
+                <li key={label}>
+                  <Link
+                    to={to}
+                    className="text-sm text-gray-500 hover:text-indigo-600 transition-colors"
+                  >
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-sm font-semibold text-gray-900 mb-3">
+              Connect
+            </h4>
+            <div className="flex gap-3">
+              {SOCIAL_ICONS.map((item, i) => (
+                <a
+                  key={i}
+                  href={item.link}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="h-9 w-9 flex items-center justify-center rounded-lg bg-white border border-gray-200 text-gray-500 hover:text-indigo-600 hover:border-indigo-300 transition-colors shadow-sm"
+                >
+                  <FontAwesomeIcon icon={item.icon} className="text-base" />
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-100 pt-6 flex flex-col sm:flex-row justify-between items-center gap-2">
+          <p className="text-xs text-gray-400">
             © 2025 Evenza. All rights reserved.
           </p>
-        </div>
-        <div>
-          <SocialLinks />
-          <p className="text-[#bdbdbd] text-sm md:text-base text-center md:text-left ">
+          <p className="text-xs text-gray-400">
             Designed & developed by{" "}
-            <a href="https://github.com/rankdeveloper" target="_blank">
-              <span className="text-indigo-600  hover:text-indigo-700 hover:font-medium">
-                Rankush
-              </span>
+            <a
+              href="https://github.com/rankdeveloper"
+              target="_blank"
+              rel="noreferrer"
+              className="text-indigo-500 hover:text-indigo-600 font-medium"
+            >
+              Rankush
             </a>
           </p>
         </div>
@@ -32,20 +87,3 @@ export default function Footer() {
     </footer>
   );
 }
-
-const SocialLinks = () => {
-  return (
-    <div className="flex gap-4 items-center justify-center ">
-      {SOCIAL_ICONS.map((item, i) => (
-        <div key={i} className="p-[2px] rounded-md">
-          <a href={item.link} target="_blank">
-            <FontAwesomeIcon
-              icon={item.icon}
-              className=" bg-white text-3xl hover:text-gray-500 transition-all duration-300  text-indigo-600 rounded-md cursor-pointer"
-            />
-          </a>
-        </div>
-      ))}
-    </div>
-  );
-};

@@ -7,6 +7,8 @@ import {
   Menu,
   X,
   UserCircle,
+  LayoutDashboard,
+  PlusCircle,
 } from "lucide-react";
 import { useAuthStore } from "../authStore";
 import { useState } from "react";
@@ -18,71 +20,75 @@ export default function Navbar() {
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   return (
-    <nav className="bg-white shadow-md fixed w-full z-50">
+    <nav className="bg-white/80 backdrop-blur-md border-b border-gray-100 fixed w-full z-50 shadow-sm">
       <div className="mx-auto px-4 xl:px-16">
         <div className="flex justify-between items-center h-16">
-          <Link to="/" className="flex items-center space-x-2">
-            <Calendar className="h-6 w-6 text-indigo-600" />
-            <span className="font-bold text-xl text-gray-900">Evenza</span>
+          <Link to="/" className="flex items-center space-x-2 group">
+            <div className="bg-indigo-600 p-1.5 rounded-lg group-hover:bg-indigo-700 transition-colors">
+              <Calendar className="h-5 w-5 text-white" />
+            </div>
+            <span className="font-bold text-xl text-gray-900 tracking-tight">Evenza</span>
           </Link>
 
           <div className="md:hidden">
-            <button onClick={toggleMenu} className="text-gray-700">
-              {menuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
+            <button
+              onClick={toggleMenu}
+              className="text-gray-600 hover:text-indigo-600 p-2 rounded-lg hover:bg-indigo-50 transition-colors"
+            >
+              {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
 
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center gap-1">
             {user ? (
               <>
                 <NavLink
                   to="/dashboard"
                   className={({ isActive }) =>
-                    `  px-3 py-2 rounded-md text-sm font-medium ${
+                    `flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       isActive
-                        ? "text-indigo-600"
-                        : "text-gray-700 hover:text-indigo-600"
-                    } `
+                        ? "text-indigo-600 bg-indigo-50"
+                        : "text-gray-600 hover:text-indigo-600 hover:bg-indigo-50"
+                    }`
                   }
                 >
+                  <LayoutDashboard className="h-4 w-4" />
                   Dashboard
                 </NavLink>
                 <NavLink
                   to="/createEvent"
                   className={({ isActive }) =>
-                    `px-4 py-2 rounded-md text-sm font-medium ${
+                    `flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       isActive
-                        ? " text-indigo-500"
-                        : " text-gray-700 hover:text-indigo-500"
+                        ? "text-indigo-600 bg-indigo-50"
+                        : "text-gray-600 hover:text-indigo-600 hover:bg-indigo-50"
                     }`
                   }
                 >
+                  <PlusCircle className="h-4 w-4" />
                   Create Event
                 </NavLink>
                 <button
                   onClick={() => signOut()}
-                  className="flex items-center space-x-1 text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+                  className="flex items-center gap-1.5 text-gray-600 hover:text-red-500 hover:bg-red-50 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
                 >
                   <LogOut className="h-4 w-4" />
-                  <span>Sign Out</span>
+                  Sign Out
                 </button>
-
                 <NavLink
                   to="profile/edit"
-                  className="flex items-center space-x-1 text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+                  className="ml-1 flex items-center hover:opacity-80 transition-opacity"
                 >
                   {user.pic ? (
                     <img
                       src={user?.pic}
                       alt="profile"
-                      className="2xl:h-10 sm:h-8  2xl:w-10 sm:w-8 rounded-full"
+                      className="h-9 w-9 rounded-full ring-2 ring-indigo-200 object-cover"
                     />
                   ) : (
-                    <UserCircle className="text-indigo-500 h-8 w-8 2xl:h-10 2xl:w-10" />
+                    <div className="h-9 w-9 rounded-full bg-indigo-100 flex items-center justify-center ring-2 ring-indigo-200">
+                      <UserCircle className="text-indigo-600 h-6 w-6" />
+                    </div>
                   )}
                 </NavLink>
               </>
@@ -91,92 +97,77 @@ export default function Navbar() {
                 <NavLink
                   to="/login"
                   className={({ isActive }) =>
-                    `flex items-center space-x-1  hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium ${
-                      isActive ? "text-indigo-600" : "text-gray-700"
+                    `flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      isActive ? "text-indigo-600 bg-indigo-50" : "text-gray-600 hover:text-indigo-600 hover:bg-indigo-50"
                     }`
                   }
                 >
                   <LogIn className="h-4 w-4" />
-                  <span>Sign In</span>
+                  Sign In
                 </NavLink>
                 <NavLink
                   to="/register"
                   className={({ isActive }) =>
-                    `flex items-center space-x-1  px-4 py-2 rounded-md text-sm font-medium  ${
+                    `flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       isActive
-                        ? " bg-white text-indigo-600 border border-indigo-600 "
+                        ? "bg-indigo-700 text-white"
                         : "text-white bg-indigo-600 hover:bg-indigo-700"
                     }`
                   }
                 >
                   <UserPlus className="h-4 w-4" />
-                  <span>Sign Up</span>
+                  Sign Up
                 </NavLink>
               </>
             )}
           </div>
         </div>
 
-        {/* //mobile */}
         <AnimatePresence>
           {menuOpen && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{
-                duration: 0.3,
-                type: "spring",
-                stiffness: 120,
-                bounce: 0.3,
-              }}
-              className={`transition-all duration-300 ease-in-out md:hidden mt-2 space-y-2 pb-4 ${
-                !menuOpen ? "!min-h-[10rem]" : ""
-              } `}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden overflow-hidden border-t border-gray-100 py-3 space-y-1"
             >
               {user ? (
                 <>
                   <Link
                     to="/dashboard"
                     onClick={toggleMenu}
-                    className="block text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+                    className="flex items-center gap-2 text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
                   >
+                    <LayoutDashboard className="h-4 w-4" />
                     Dashboard
                   </Link>
                   <Link
                     to="/createEvent"
                     onClick={toggleMenu}
-                    className="block bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
+                    className="flex items-center gap-2 bg-indigo-600 text-white px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
                   >
+                    <PlusCircle className="h-4 w-4" />
                     Create Event
                   </Link>
-
                   <NavLink
                     to="profile/edit"
-                    className="flex items-center space-x-1 text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+                    onClick={toggleMenu}
+                    className="flex items-center gap-2 text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
                   >
                     {user.pic ? (
-                      <>
-                        <img
-                          src={user?.pic}
-                          alt="profile"
-                          className="2xl:h-10 sm:h-8  2xl:w-10 sm:w-8 rounded-full"
-                        />
-                        <span className="ps-2">Profile</span>
-                      </>
+                      <img src={user?.pic} alt="profile" className="h-6 w-6 rounded-full object-cover" />
                     ) : (
-                      <UserCircle className="text-indigo-500 h-8 w-8 2xl:h-10 2xl:w-10" />
+                      <UserCircle className="text-indigo-500 h-6 w-6" />
                     )}
+                    Profile
                   </NavLink>
-
                   <button
-                    onClick={() => {
-                      signOut();
-                      toggleMenu();
-                    }}
-                    className="flex items-center space-x-1 text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+                    onClick={() => { signOut(); toggleMenu(); }}
+                    className="flex items-center gap-2 text-red-500 hover:bg-red-50 px-3 py-2.5 rounded-lg text-sm font-medium w-full transition-colors"
                   >
                     <LogOut className="h-4 w-4" />
-                    <span>Sign Out</span>
+                    Sign Out
                   </button>
                 </>
               ) : (
@@ -184,18 +175,18 @@ export default function Navbar() {
                   <Link
                     to="/login"
                     onClick={toggleMenu}
-                    className="flex items-center space-x-1 text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+                    className="flex items-center gap-2 text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
                   >
                     <LogIn className="h-4 w-4" />
-                    <span>Sign In</span>
+                    Sign In
                   </Link>
                   <Link
                     to="/register"
                     onClick={toggleMenu}
-                    className="flex items-center space-x-1 bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
+                    className="flex items-center gap-2 bg-indigo-600 text-white px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
                   >
                     <UserPlus className="h-4 w-4" />
-                    <span>Sign Up</span>
+                    Sign Up
                   </Link>
                 </>
               )}

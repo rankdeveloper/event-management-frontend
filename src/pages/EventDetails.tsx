@@ -17,6 +17,7 @@ import { useAuthStore, Event } from "../authStore";
 import toast from "react-hot-toast";
 import OwnerImage from "@/components/OwnerImage";
 import MessageBox from "@/components/messageBox";
+import image1 from "../assets/image1.png";
 
 export default function EventDetails() {
   const { id } = useParams<{ id: string }>();
@@ -31,31 +32,26 @@ export default function EventDetails() {
     if (!user) {
       toast.error("Please login first");
       navigate("/dashboard");
-      return;
     }
   }, [user]);
+
   useEffect(() => {
     if (id && user) fetchEventDetails();
   }, [id]);
 
   const fetchEventDetails = async () => {
     try {
-      console.log("Fetching event details for ID:", id);
       const data = await events.getEvent(id!);
-      // Normalize attendees to always have 'id'
-      const normalizedAttendees = (data.attendees as any[]).map((a) => ({
+      data.attendees = (data.attendees as any[]).map((a) => ({
         ...a,
         id: a.id || a._id,
       }));
-      data.attendees = normalizedAttendees;
       setEvent(data);
       setCompleted(data.completed || false);
     } catch (error) {
-      console.error("Error fetching event:", error);
       toast.error(
-        error instanceof Error ? error.message : "Error loading event details"
+        error instanceof Error ? error.message : "Error loading event details",
       );
-
       navigate("/dashboard");
     } finally {
       setLoading(false);
@@ -63,85 +59,72 @@ export default function EventDetails() {
   };
 
   const handleCompletionChange = async (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    const newCompletedStatus = e.target.checked;
+    const val = e.target.checked;
     try {
-      const response = await events.completedEvent(id!, {
-        completed: newCompletedStatus,
-      });
-      setCompleted(newCompletedStatus);
-      toast.success(response.message);
+      const res = await events.completedEvent(id!, { completed: val });
+      setCompleted(val);
+      toast.success(res.message);
     } catch (error) {
-      console.error("Error updating completion status:", error);
-
       toast.error(
-        error instanceof Error
-          ? error.message
-          : "Error updating completion status"
+        error instanceof Error ? error.message : "Error updating status",
       );
-      setCompleted(!newCompletedStatus);
+      setCompleted(!val);
     }
   };
 
   const handleAttendance = async () => {
     if (!user) {
-      toast.error("Please sign in to register for events");
+      toast.error("Please sign in");
       navigate("/login");
       return;
     }
-
-    // Prevent guest users from registering
     if (user.isGuest) {
-      toast.error(
-        "Guest users cannot register for events. Please create an account to register."
-      );
+      toast.error("Guest users cannot register for events");
       return;
     }
-
     if (!event) return;
-
     try {
       const isAttending = event.attendees.some((a) => a.id === user.id);
-
       if (isAttending) {
         await events.unregisterEvent(event._id);
-        setEvent((prevEvent) => {
-          if (!prevEvent) return null;
-          return {
-            ...prevEvent,
-            attendees: prevEvent.attendees.filter((a) => a.id !== user.id),
-          };
-        });
-        toast.success("Successfully unregistered from event");
+        setEvent((prev) =>
+          prev
+            ? {
+                ...prev,
+                attendees: prev.attendees.filter((a) => a.id !== user.id),
+              }
+            : null,
+        );
+        toast.success("Unregistered from event");
       } else {
         if (event.attendees.length >= event.maxAttendees) {
           toast.error("Event is full");
           return;
         }
-
         await events.registerEvent(event._id);
-        setEvent((prevEvent) => {
-          if (!prevEvent) return null;
-          return {
-            ...prevEvent,
-            attendees: [
-              ...prevEvent.attendees,
-              {
-                id: user.id,
-                email: user.email,
-                username: user.username,
-                pic: user.pic,
-              },
-            ],
-          };
-        });
-        toast.success("Successfully registered for event");
+        setEvent((prev) =>
+          prev
+            ? {
+                ...prev,
+                attendees: [
+                  ...prev.attendees,
+                  {
+                    id: user.id,
+                    email: user.email,
+                    username: user.username,
+                    pic: user.pic,
+                  },
+                ],
+              }
+            : null,
+        );
+        toast.success("Registered for event");
       }
     } catch (error) {
-      console.error("Error updating registration:", error);
       toast.error(
-        error instanceof Error ? error.message : "Error updating registration"
+        error instanceof Error ? error.message : "Error updating registration",
       );
     }
   };
@@ -152,258 +135,280 @@ export default function EventDetails() {
       !window.confirm("Are you sure you want to delete this event?")
     )
       return;
-
     try {
       setDeleting(true);
       await events.deleteEvent(event._id);
-      toast.success("Event deleted successfully");
+      toast.success("Event deleted");
       navigate("/dashboard");
-    } catch (error) {
-      console.error("Error deleting event:", error);
+    } catch {
       toast.error("Error deleting event");
     } finally {
       setDeleting(false);
     }
   };
 
-  console.log("completed : ", completed);
-
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[80vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600" />
       </div>
     );
   }
 
   if (!event) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Event not found
-          </h2>
-          <Link
-            to="/dashboard"
-            className="inline-flex items-center text-indigo-600 hover:text-indigo-700"
-          >
-            <ArrowLeft className="h-5 w-5 mr-2" />
-            Back to Dashboard
-          </Link>
-        </div>
+      <div className="max-w-4xl mx-auto px-4 py-8 text-center">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          Event not found
+        </h2>
+        <Link
+          to="/dashboard"
+          className="inline-flex items-center text-indigo-600 hover:text-indigo-700"
+        >
+          <ArrowLeft className="h-5 w-5 mr-2" /> Back to Dashboard
+        </Link>
       </div>
     );
   }
 
-  // const isAttending = user
-  //   ? event.attendees.some((a) => a.id === user.id)
-  //   : false;
   const isAttending = user
     ? event.attendees.some((a: any) => (a.id || a._id) === user.id)
     : false;
-
-  // const isOwner = user && (event.createdBy._id === user.id || event.createdBy.id === user.id);
   const isOwner = user && (event.createdBy as any)._id === user.id;
   const isFull = event.attendees.length >= event.maxAttendees;
+  const attendancePct = Math.min(
+    (event.attendees.length / event.maxAttendees) * 100,
+    100,
+  );
 
   return (
-    <div className="pt-0 sm:!pt-4 xl:!pt-20 h-full">
-      <div className="md:max-w-3xl xl:max-w-6xl max-w-full mx-auto  px-4 md:py-8 xl:py-16 h-full ">
+    <div className="min-h-screen bg-gray-50 pt-16">
+      <div className="max-w-5xl mx-auto px-4 py-8">
         <Link
           to="/events"
-          className="inline-flex items-center text-indigo-600 hover:text-indigo-700 mb-6"
+          className="inline-flex items-center text-sm text-indigo-600 hover:text-indigo-700 mb-6 font-medium"
         >
-          <ArrowLeft className="h-5 w-5 mr-2" />
-          Back to Events
+          <ArrowLeft className="h-4 w-4 mr-1.5" /> Back to Events
         </Link>
 
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          <div className="p-6">
-            <div className="flex justify-between items-start mb-6">
-              <h1 className="text-3xl font-bold text-gray-900">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          {/* Hero image */}
+          <div className="relative h-64 md:h-80 overflow-hidden">
+            <img
+              src={event.image || image1}
+              alt={event.title}
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+            {event.category && (
+              <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-indigo-600 text-xs font-semibold px-3 py-1 rounded-full">
+                {event.category}
+              </span>
+            )}
+            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
+              <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight">
                 {event.title}
               </h1>
-
-              <div className="flex space-x-2">
+              <div className="flex items-center gap-2">
                 <MessageBox
                   eventId={id!}
                   currentUser={user?.username!}
                   profilePic={user?.pic!}
                 />
+                {isOwner && (
+                  <>
+                    <button
+                      onClick={() =>
+                        navigate(`/createEvent/${event._id}?mode=edit`)
+                      }
+                      className="p-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-colors"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={handleDelete}
+                      disabled={deleting}
+                      className="p-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-red-500/70 transition-colors"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </>
+                )}
               </div>
-              {isOwner && (
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() =>
-                      navigate(`/createEvent/${event._id}?mode=edit`)
-                    }
-                    className="p-2 text-gray-600 hover:text-indigo-600 rounded-full hover:bg-gray-100"
-                  >
-                    <Edit className="h-5 w-5" />
-                  </button>
-                  <button
-                    onClick={handleDelete}
-                    disabled={deleting}
-                    className="p-2 text-gray-600 hover:text-red-600 rounded-full hover:bg-gray-100"
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </button>
-                </div>
-              )}
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-6">
-                <div className="prose max-w-none">
-                  <p className="text-gray-600">{event?.description || "-"}</p>
+          <div className="p-6 md:p-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="md:col-span-2 space-y-6">
+                <p className="text-gray-600 leading-relaxed">
+                  {event.description || "-"}
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {[
+                    {
+                      icon: Calendar,
+                      label: format(new Date(event.date), "EEEE, MMMM d, yyyy"),
+                    },
+                    {
+                      icon: Clock,
+                      label: format(new Date(event.date), "h:mm a"),
+                    },
+                    { icon: MapPin, label: event.location || "-" },
+                    { icon: Tag, label: event.category || "-" },
+                  ].map(({ icon: Icon, label }) => (
+                    <div
+                      key={label}
+                      className="flex items-center gap-3 bg-gray-50 rounded-xl px-4 py-3"
+                    >
+                      <Icon className="h-4 w-4 text-indigo-500 shrink-0" />
+                      <span className="text-sm text-gray-700">{label}</span>
+                    </div>
+                  ))}
                 </div>
 
-                <div className="space-y-4">
-                  <div className="flex items-center text-gray-600">
-                    <Calendar className="h-5 w-5 mr-3" />
-                    <span>
-                      {format(new Date(event.date), "EEEE, MMMM d, yyyy")}
-                    </span>
-                  </div>
-                  <div className="flex items-center text-gray-600">
-                    <Clock className="h-5 w-5 mr-3" />
-                    <span>{format(new Date(event.date), "h:mm a")}</span>
-                  </div>
-                  <div className="flex items-center text-gray-600">
-                    <MapPin className="h-5 w-5 mr-3" />
-                    <span>{event?.location || "-"}</span>
-                  </div>
-                  <div className="flex items-center text-gray-600">
-                    <Tag className="h-5 w-5 mr-3" />
-                    <span>{event?.category || "-"}</span>
-                  </div>
-                  <div className="flex items-center text-gray-600">
-                    <Users className="h-5 w-5 mr-3" />
-                    <span>
-                      {event?.attendees.length} / {event?.maxAttendees}{" "}
-                      attendees
-                    </span>
-                  </div>
+                <div className="flex items-center gap-3 bg-gray-50 rounded-xl px-4 py-3">
+                  <BadgeCheck className="h-4 w-4 text-indigo-500 shrink-0" />
+                  <span className="text-sm text-gray-700">Status:</span>
+                  <span
+                    className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${completed ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}
+                  >
+                    {completed ? "Completed" : "In Progress"}
+                  </span>
+                  {isOwner && (
+                    <input
+                      type="checkbox"
+                      checked={completed}
+                      onChange={handleCompletionChange}
+                      className="ml-auto h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    />
+                  )}
+                </div>
 
-                  <div className="flex items-center text-gray-600">
-                    <BadgeCheck className="h-5 w-5 mr-3" />
-                    <span className="flex items-center gap-2">
-                      Status:{" "}
-                      <span
-                        className={`px-2 py-1 rounded-full text-sm font-medium ${
-                          completed
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
-                      >
-                        {completed ? "Completed" : "In Progress"}
+                <div>
+                  <div className="flex justify-between text-sm text-gray-500 mb-2">
+                    <div className="flex items-center gap-1.5">
+                      <Users className="h-4 w-4 text-indigo-400" />
+                      <span>
+                        {event.attendees.length} / {event.maxAttendees}{" "}
+                        attendees
                       </span>
-                      {isOwner && (
-                        <input
-                          type="checkbox"
-                          checked={completed}
-                          onChange={handleCompletionChange}
-                          className="ml-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                        />
-                      )}
+                    </div>
+                    <span
+                      className={
+                        isFull
+                          ? "text-red-500 font-medium"
+                          : "text-green-600 font-medium"
+                      }
+                    >
+                      {isFull
+                        ? "Full"
+                        : `${event.maxAttendees - event.attendees.length} spots left`}
                     </span>
                   </div>
+                  <div className="w-full bg-gray-100 rounded-full h-2">
+                    <div
+                      className={`h-2 rounded-full transition-all ${isFull ? "bg-red-400" : "bg-indigo-500"}`}
+                      style={{ width: `${attendancePct}%` }}
+                    />
+                  </div>
                 </div>
+
+                {event.attendees.length > 0 && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                      Attendees
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {event.attendees.map((attendee) => (
+                        <div
+                          key={attendee.id}
+                          className="flex items-center gap-2 bg-gray-50 rounded-full px-3 py-1.5"
+                        >
+                          {attendee.pic ? (
+                            <img
+                              src={attendee.pic}
+                              alt={attendee.username}
+                              className="h-6 w-6 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="h-6 w-6 rounded-full bg-indigo-100 flex items-center justify-center">
+                              <Users className="h-3 w-3 text-indigo-500" />
+                            </div>
+                          )}
+                          <span className="text-xs text-gray-700 font-medium">
+                            {attendee.username || "-"}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
-              <div className="space-y-6">
-                <div className="bg-gray-50 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <div className="space-y-4">
+                <div className="bg-gray-50 rounded-xl p-5">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-4">
                     Event Host
                   </h3>
-                  <div className="flex items-center">
+                  <div className="flex items-center gap-3">
                     <div
-                      className={`${
-                        event?.createdBy?.pic ? " p-0 " : "bg-indigo-100 p-3"
-                      }  rounded-full `}
+                      className={`${event.createdBy?.pic ? "" : "bg-indigo-100 p-3"} rounded-full`}
                     >
-                      {event?.createdBy?.pic ? (
+                      {event.createdBy?.pic ? (
                         <OwnerImage
-                          image={event?.createdBy?.pic}
-                          className="h-12 w-12 rounded-full "
+                          image={event.createdBy.pic}
+                          className="h-12 w-12 rounded-full object-cover"
                         />
                       ) : (
                         <Users className="h-6 w-6 text-indigo-600" />
                       )}
                     </div>
-                    <div className="ml-4">
-                      <p className="text-gray-900 font-medium">
-                        {event?.createdBy.username || "-"}
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {event.createdBy.username || "-"}
                       </p>
-                      <p className="text-gray-500 text-sm">Organizer</p>
+                      <p className="text-xs text-gray-500">Organizer</p>
                     </div>
                   </div>
                 </div>
 
                 {isOwner ? (
-                  <div className="w-full py-3 px-4 rounded-md text-center font-medium bg-green-100 text-green-700">
+                  <div className="w-full py-3 px-4 rounded-xl text-center text-sm font-medium bg-green-50 text-green-700 border border-green-200">
                     You are the organizer
                   </div>
                 ) : user ? (
                   user.isGuest ? (
-                    <div className="w-full py-3 px-4 rounded-md text-center font-medium bg-yellow-100 text-yellow-700">
-                      Guest users cannot register for events
+                    <div className="w-full py-3 px-4 rounded-xl text-center text-sm font-medium bg-yellow-50 text-yellow-700 border border-yellow-200">
+                      Guest users cannot register
                     </div>
                   ) : (
                     <button
                       onClick={handleAttendance}
                       disabled={!user || (isFull && !isAttending)}
-                      className={`w-full py-3 px-4 rounded-md text-center font-medium ${
+                      className={`w-full py-3 px-4 rounded-xl text-center text-sm font-semibold transition-colors ${
                         isAttending
-                          ? "bg-red-100 text-red-700 hover:bg-red-200"
+                          ? "bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
                           : isFull
-                          ? "bg-gray-100 text-gray-500 cursor-not-allowed"
-                          : "bg-indigo-600 text-white hover:bg-indigo-700"
+                            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                            : "bg-indigo-600 text-white hover:bg-indigo-700"
                       }`}
                     >
                       {isAttending
                         ? "Cancel Registration"
                         : isFull
-                        ? "Event is Full"
-                        : "Register for Event"}
+                          ? "Event is Full"
+                          : "Register for Event"}
                     </button>
                   )
                 ) : (
                   <Link
                     to="/login"
-                    className="block w-full py-3 px-4 rounded-md text-center font-medium bg-indigo-600 text-white hover:bg-indigo-700"
+                    className="block w-full py-3 px-4 rounded-xl text-center text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
                   >
                     Sign in to Register
                   </Link>
-                )}
-
-                {event.attendees.length > 0 && (
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                      Attendees
-                    </h3>
-                    <div className=" flex flex-wrap gap-3 justify-content-center items-center">
-                      {event?.attendees.map((attendee) => (
-                        <div
-                          key={attendee.id}
-                          className="flex g-1 items-center text-gray-600"
-                        >
-                          <div className="bg-gray-100 rounded-full p-2">
-                            {attendee?.pic ? (
-                              <img
-                                src={attendee?.pic}
-                                alt={attendee?.username}
-                                className="h-8 w-8 hover:scale-150 transition-all rounded-full"
-                              />
-                            ) : (
-                              <Users className="h-4 w-4" />
-                            )}
-                          </div>
-                          <span className="">{attendee?.username || "-"}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
                 )}
               </div>
             </div>
