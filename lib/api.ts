@@ -1,7 +1,7 @@
 const api_url =
   window.location.hostname === "localhost"
     ? "http://localhost:5000"
-    : "https://ocgg00o40ksg088g4w4gs440.coolify.probir.dev";
+    : "https://event-management-backend-10tv.onrender.com";
 
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   try {
@@ -70,7 +70,7 @@ export const auth = {
 export const events = {
   createEvent: (
     // data: Omit<Event, "_id" | "createdBy" | "attendees" | "createdAt">
-    data: FormData
+    data: FormData,
   ) =>
     fetchApi("/events", {
       method: "POST",
