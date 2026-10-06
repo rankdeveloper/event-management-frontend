@@ -77,8 +77,15 @@ export const events = {
       body: data,
     }),
 
-  getEvents: (page = 1, limit = 12) =>
-    fetchApi(`/events?page=${page}&limit=${limit}`),
+  getEvents: (page = 1, limit = 12, search = "", category = "", sort = "") =>
+    fetchApi(`/events?page=${page}&limit=${limit}&search=${search}&category=${category}&sort=${sort}`),
+
+  getMyEvents: () => fetchApi("/events/my-events"),
+
+  getBookmarks: () => fetchApi("/events/bookmarks"),
+
+  toggleBookmark: (id: string) =>
+    fetchApi(`/events/${id}/bookmark`, { method: "POST" }),
 
   getEvent: (id: string) => fetchApi(`/events/${id}`),
 

@@ -2,37 +2,36 @@ import { child, parent } from "@/lib/animation-variants";
 import { trustedBy_icons } from "@/rowData";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
+
 export default function TRUSTED_BY() {
   return (
-    <div className="flex sm:flex-row flex-col gap-4 sm:gap-0  items-center justify-between bg-white py-8 w-full border-b-gray-300 border border-t-0">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
+    <section className="py-12 px-4 bg-white border-t border-gray-100">
+      <motion.p
+        initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
-        transition={{ type: "keyframes", stiffness: 120, duration: 1 }}
-        className="sm:w-1/4 w-full "
+        transition={{ duration: 0.4 }}
+        viewport={{ once: true }}
+        className="text-center text-xs font-semibold uppercase tracking-widest text-gray-400 mb-8"
       >
-        <h3 className="!float-none text-center  sm:float-right text-xl font-semibold">
-          Trusted Partners :{" "}
-        </h3>
-      </motion.div>
+        Trusted by teams at
+      </motion.p>
       <motion.div
         variants={parent}
         initial="initial"
-        key="trusted-by"
-        whileInView={"visible"}
-        transition={{ delay: 0.5 }}
-        className="flex gap-14 items-center justify-center max-w-3xl sm:max-w-5xl 2xl:max-w-7xl mx-auto text-2xl sm:text-5xl 2xl:text-6xl text-gray-500"
+        whileInView="visible"
+        viewport={{ once: true }}
+        className="flex flex-wrap items-center justify-center gap-8 sm:gap-14"
       >
         {trustedBy_icons.map((item, i) => (
-          <motion.div variants={child} key={i}>
-            <FontAwesomeIcon
-              key={i}
-              icon={item.icon}
-              className={`${item.className}`}
-            />
+          <motion.div
+            variants={child}
+            key={i}
+            className="text-3xl sm:text-4xl text-gray-300 hover:text-gray-500 transition-colors duration-300 cursor-pointer"
+          >
+            <FontAwesomeIcon icon={item.icon} className={item.className} />
           </motion.div>
         ))}
       </motion.div>
-    </div>
+    </section>
   );
 }

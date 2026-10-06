@@ -11,6 +11,9 @@ import {
   Trash2,
   ArrowLeft,
   BadgeCheck,
+  Bookmark,
+  BookmarkCheck,
+  Share2,
 } from "lucide-react";
 import { events } from "../../lib/api";
 import { useAuthStore, Event } from "../authStore";
@@ -18,15 +21,18 @@ import toast from "react-hot-toast";
 import OwnerImage from "@/components/OwnerImage";
 import MessageBox from "@/components/messageBox";
 import image1 from "../assets/image1.png";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function EventDetails() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuthStore();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
   const [completed, setCompleted] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -38,6 +44,51 @@ export default function EventDetails() {
   useEffect(() => {
     if (id && user) fetchEventDetails();
   }, [id]);
+
+  useQuery({
+    queryKey: ["bookmarks"],
+    queryFn: () => events.getBookmarks(),
+    enabled: !!user && !user.isGuest,
+    onSuccess: (data: any) => {
+      const ids = data.bookmarks.map((b: any) => b._id || b);
+      setIsBookmarked(ids.includes(id));
+    },
+  } as any);
+
+  const bookmarkMutation = useMutation({
+    mutationFn: () => events.toggleBookmark(id!),
+    onMutate: () => setIsBookmarked((prev) => !prev),
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ["bookmarks"] });
+      toast.success(data.bookmarked ? "Event bookmarked!" : "Bookmark removed");
+    },
+    onError: () => {
+      setIsBookmarked((prev) => !prev);
+      toast.error("Failed to update bookmark");
+    },
+  });
+
+  const handleBookmark = () => {
+    if (!user) {
+      toast.error("Sign in to bookmark events");
+      return;
+    }
+    if (user.isGuest) {
+      toast.error("Guest users cannot bookmark events");
+      return;
+    }
+    bookmarkMutation.mutate();
+  };
+
+  const handleShare = () => {
+    const url = `${window.location.origin}/events/${id}`;
+    if (navigator.share) {
+      navigator.share({ title: event?.title, url });
+    } else {
+      navigator.clipboard.writeText(url);
+      toast.success("Link copied to clipboard!");
+    }
+  };
 
   const fetchEventDetails = async () => {
     try {
@@ -192,7 +243,7 @@ export default function EventDetails() {
         </Link>
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          {/* Hero image */}
+          {/* Hero */}
           <div className="relative h-64 md:h-80 overflow-hidden">
             <img
               src={event.image || image1}
@@ -205,11 +256,33 @@ export default function EventDetails() {
                 {event.category}
               </span>
             )}
+            {/* Top-right action buttons */}
+            <div className="absolute top-4 right-4 flex gap-2">
+              <button
+                onClick={handleShare}
+                className="p-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-colors"
+                title="Share event"
+              >
+                <Share2 className="h-4 w-4" />
+              </button>
+              <button
+                onClick={handleBookmark}
+                className={`p-2 backdrop-blur-sm rounded-lg transition-colors ${isBookmarked ? "bg-indigo-600 text-white" : "bg-white/20 text-white hover:bg-white/30"}`}
+                title={isBookmarked ? "Remove bookmark" : "Bookmark event"}
+              >
+                {isBookmarked ? (
+                  <BookmarkCheck className="h-4 w-4" />
+                ) : (
+                  <Bookmark className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+
             <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-              <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight">
+              <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight pr-4">
                 {event.title}
               </h1>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 shrink-0">
                 <MessageBox
                   eventId={id!}
                   currentUser={user?.username!}
@@ -372,6 +445,31 @@ export default function EventDetails() {
                       <p className="text-xs text-gray-500">Organizer</p>
                     </div>
                   </div>
+                </div>
+
+                {/* Share + Bookmark actions */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleShare}
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 border border-gray-200 rounded-xl text-sm text-gray-600 hover:border-indigo-300 hover:text-indigo-600 transition-colors"
+                  >
+                    <Share2 className="h-4 w-4" /> Share
+                  </button>
+                  <button
+                    onClick={handleBookmark}
+                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-sm font-medium transition-colors border ${
+                      isBookmarked
+                        ? "bg-indigo-600 text-white border-indigo-600"
+                        : "border-gray-200 text-gray-600 hover:border-indigo-300 hover:text-indigo-600"
+                    }`}
+                  >
+                    {isBookmarked ? (
+                      <BookmarkCheck className="h-4 w-4" />
+                    ) : (
+                      <Bookmark className="h-4 w-4" />
+                    )}
+                    {isBookmarked ? "Saved" : "Save"}
+                  </button>
                 </div>
 
                 {isOwner ? (

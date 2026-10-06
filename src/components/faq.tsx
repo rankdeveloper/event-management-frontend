@@ -10,29 +10,33 @@ import { motion } from "framer-motion";
 
 export default function FAQ() {
   return (
-    <div className="sm:max-h-[600px] lg:max-h-[600px] overflow-y-scroll py-10 sm:px-0 px-4 ">
-      <motion.h2
+    <div className="max-w-3xl mx-auto w-full">
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        transition={{ type: "keyframes", duration: 0.5 }}
-        className="text-2xl sm:text-4xl font-semibold mb-4 uppercase"
+        transition={{ duration: 0.5 }}
+        viewport={{ once: true }}
+        className="text-center mb-10"
       >
-        Frequently Asked Questions
-      </motion.h2>
-      <Accordion type="multiple" className="sm:!w-[80vw]">
+        <span className="text-xs font-semibold uppercase tracking-widest text-indigo-500 mb-2 block">FAQ</span>
+        <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">Frequently Asked Questions</h2>
+        <p className="text-gray-500 mt-3 text-sm">Everything you need to know about Evenza.</p>
+      </motion.div>
+
+      <Accordion type="multiple">
         <motion.div
           variants={topToBottomParent}
           initial="initial"
           whileInView="visible"
-          key="upcoming-events"
+          viewport={{ once: true }}
         >
-          {faq.map((item, i: number) => (
+          {faq.map((item, i) => (
             <motion.div key={i} variants={topToBottomChild}>
-              <AccordionItem key={i} value={`item-${i}`} className="">
-                <AccordionTrigger className="underline-none text-base sm:text-xl font-semibold">
+              <AccordionItem value={`item-${i}`} className="border border-gray-100 rounded-xl mb-2 px-1 shadow-sm bg-white">
+                <AccordionTrigger className="text-sm sm:text-base font-semibold text-gray-800 hover:text-indigo-600 px-4 py-4 [&>svg]:text-indigo-400">
                   {item.question}
                 </AccordionTrigger>
-                <AccordionContent className="border-l-2 border-b border-gray-200 p-2 text-sm sm:text-base">
+                <AccordionContent className="text-sm text-gray-500 px-4 pb-4 leading-relaxed">
                   {item.answer}
                 </AccordionContent>
               </AccordionItem>

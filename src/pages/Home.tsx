@@ -11,6 +11,7 @@ import InfoEvent from "@/components/events-info";
 import { useQuery } from "@tanstack/react-query";
 import { events } from "../../lib/api";
 import CounterNumber from "@/components/counter-number";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 export default function Home() {
   const { data } = useQuery({
@@ -21,136 +22,160 @@ export default function Home() {
   });
 
   const stats = [
-    {
-      number: data?.totalEvents || 0,
-      title: " Total events created",
-    },
-    {
-      number: data?.completedEvents || 0,
-      title: "Total events completed successfully",
-    },
-    {
-      number: data?.totalAttendees || 0,
-      title: "Total attendees",
-    },
+    { number: data?.totalEvents || 0, label: "Events Created", suffix: "+" },
+    { number: data?.completedEvents || 0, label: "Successfully Completed", suffix: "+" },
+    { number: data?.totalAttendees || 0, label: "Happy Attendees", suffix: "+" },
   ];
 
   return (
-    <div className="flex flex-col justify-center items-center h-full w-full">
-      <div className="w-full  h-full ">
-        <div className="text-center py-20 sm:py-28 px-4">
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-            className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-600 text-sm font-medium px-4 py-1.5 rounded-full mb-6 border border-indigo-100"
-          >
-            <span className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse" />
-            Trusted by 10,000+ organizers
-          </motion.div>
-          <motion.h1
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, type: "spring", stiffness: 120, delay: 0.4 }}
-            className="text-4xl font-extrabold text-gray-900 sm:text-6xl lg:text-7xl tracking-tight sm:px-16 leading-tight"
-          >
-            Transforming Occasions Into{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
-              Great Memories
-            </span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, type: "spring", stiffness: 120, delay: 0.8 }}
-            className="mt-6 max-w-2xl mx-auto text-lg text-gray-500 leading-relaxed"
-          >
-            Evenza helps individuals and teams organize successful events with smart tools and a user-friendly experience.
-          </motion.p>
-          <div className="mt-10 flex items-center flex-col sm:flex-row gap-4 justify-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, delay: 1.1 }}
-            >
-              <Link
-                to="/createEvent"
-                className="inline-flex items-center px-7 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white text-base font-semibold rounded-xl shadow-lg shadow-indigo-200 transition-all hover:-translate-y-0.5"
-              >
-                Create Your Event
-              </Link>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, delay: 1.2 }}
-            >
-              <Link
-                to="/events"
-                className="inline-flex items-center px-7 py-3.5 bg-white hover:bg-gray-50 text-gray-700 text-base font-semibold rounded-xl border border-gray-200 shadow-sm transition-all hover:-translate-y-0.5"
-              >
-                Browse Events
-              </Link>
-            </motion.div>
-          </div>
-        </div>
+    <div className="flex flex-col w-full bg-white">
+      {/* ── Hero ── */}
+      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden bg-gradient-to-b from-indigo-50/60 via-white to-white pt-20">
+        {/* background blobs */}
+        <div className="absolute top-20 left-1/4 w-72 h-72 bg-indigo-100 rounded-full blur-3xl opacity-50 pointer-events-none" />
+        <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-violet-100 rounded-full blur-3xl opacity-40 pointer-events-none" />
 
-        <div className="mb-12 mt-4 sm:px-16 px-4">
-          <h2 className="text-center text-2xl font-bold text-gray-900 mb-8">Explore Event Categories</h2>
-          <motion.div
-            variants={parent}
-            initial="initial"
-            key="events-types"
-            animate={"visible"}
-            className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4"
-          >
-            {EVENTS_GALLERY.map((item, i) => (
-              <motion.div
-                variants={child}
-                key={i}
-                className="relative h-[180px] 2xl:h-[260px] overflow-hidden rounded-2xl group cursor-pointer"
-              >
-                <img
-                  src={item.url}
-                  alt="image"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <span className="absolute bottom-3 left-0 right-0 text-center text-white font-semibold text-sm uppercase tracking-wide">
-                  {item.name}
-                </span>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-600 text-sm font-semibold px-4 py-1.5 rounded-full mb-6 border border-indigo-100 shadow-sm"
+        >
+          <Sparkles className="h-3.5 w-3.5" />
+          Trusted by 10,000+ organizers worldwide
+        </motion.div>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.35 }}
+          className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 tracking-tight leading-[1.1] max-w-4xl"
+        >
+          Transforming Occasions Into{" "}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">
+            Great Memories
+          </span>
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="mt-6 max-w-xl text-lg text-gray-500 leading-relaxed"
+        >
+          Evenza helps individuals and teams organize successful events with smart tools and a seamless experience.
+        </motion.p>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ type: "keyframes", stiffness: 120, duration: 1.5 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-8 xl:gap-16 mb-8"
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.65 }}
+          className="mt-10 flex flex-col sm:flex-row items-center gap-3 justify-center"
         >
-          {stats?.map((item, i) => (
-            <div
-              key={i}
-              className={`w-[80%] sm:w-auto text-center py-2 sm:py-6 px-4 sm:px-8   ${
-                i == 1 ? "border border-y-0 border-x-2 border-indigo-300" : ""
-              } `}
-            >
-              <h3 className="text-3xl sm:text-4xl 2xl:text-5xl font-bold">
-                <CounterNumber value={item.number} />+
-              </h3>
-              <p className="text-base mt-2 text-gray-500">{item.title}</p>
+          <Link
+            to="/createEvent"
+            className="inline-flex items-center gap-2 px-7 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white text-base font-semibold rounded-xl shadow-lg shadow-indigo-200 transition-all hover:-translate-y-0.5"
+          >
+            Create Your Event <ArrowRight className="h-4 w-4" />
+          </Link>
+          <Link
+            to="/events"
+            className="inline-flex items-center gap-2 px-7 py-3.5 bg-white hover:bg-gray-50 text-gray-700 text-base font-semibold rounded-xl border border-gray-200 shadow-sm transition-all hover:-translate-y-0.5"
+          >
+            Browse Events
+          </Link>
+        </motion.div>
+
+        {/* Stats bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.85 }}
+          className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-0 divide-y sm:divide-y-0 sm:divide-x divide-gray-200 bg-white border border-gray-100 rounded-2xl shadow-sm px-2 py-2 w-full max-w-2xl"
+        >
+          {stats.map(({ number, label, suffix }, i) => (
+            <div key={i} className="flex flex-col items-center px-8 py-3 w-full sm:w-auto">
+              <span className="text-3xl font-extrabold text-indigo-600">
+                <CounterNumber value={number} />{suffix}
+              </span>
+              <span className="text-xs text-gray-500 mt-0.5 font-medium">{label}</span>
             </div>
           ))}
         </motion.div>
+      </section>
 
-        <InfoEvent />
-      </div>
-      <VerticalSlider />
+      {/* ── Event Categories Gallery ── */}
+      <section className="py-20 px-4 sm:px-16 bg-white">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+          className="text-center mb-10"
+        >
+          <span className="text-xs font-semibold uppercase tracking-widest text-indigo-500 mb-2 block">Categories</span>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">Explore Event Categories</h2>
+          <p className="text-gray-500 mt-3 max-w-md mx-auto text-sm">
+            From music festivals to professional conferences — find the events that matter to you.
+          </p>
+        </motion.div>
+
+        <motion.div
+          variants={parent}
+          initial="initial"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-5xl mx-auto"
+        >
+          {EVENTS_GALLERY.map((item, i) => (
+            <motion.div
+              variants={child}
+              key={i}
+              className="relative h-[200px] overflow-hidden rounded-2xl group cursor-pointer shadow-sm"
+            >
+              <img
+                src={item.url}
+                alt={item.name}
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-4">
+                <span className="text-white font-bold text-sm uppercase tracking-wider">{item.name}</span>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </section>
+
+      {/* ── Features / Info ── */}
+      <InfoEvent />
+
+      {/* ── Testimonials ── */}
+      <section className="py-16 bg-white">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+          className="text-center mb-8 px-4"
+        >
+          <span className="text-xs font-semibold uppercase tracking-widest text-indigo-500 mb-2 block">Testimonials</span>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">What Organizers Say</h2>
+        </motion.div>
+        <VerticalSlider />
+      </section>
+
+      {/* ── Help / Support ── */}
       <Help />
-      <FAQ />
+
+      {/* ── FAQ ── */}
+      <section className="py-16 px-4 sm:px-16 bg-gray-50/60">
+        <FAQ />
+      </section>
+
+      {/* ── Trusted By ── */}
       <TRUSTED_BY />
+
       <Footer />
     </div>
   );
