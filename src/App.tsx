@@ -33,7 +33,16 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/my-tickets" element={<MyTickets />} />
+
+            <Route
+              path="/my-tickets"
+              element={
+                <ProtectedRoute>
+                  <MyTickets />
+                </ProtectedRoute>
+              }
+            />
+
             <Route
               path="/createEvent/:id"
               element={
@@ -56,11 +65,28 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+
             <Route path="/events/:id" element={<EventDetails />} />
 
-            <Route path="/profile/edit" element={<EditProfile />} />
+            <Route
+              path="/profile/edit"
+              element={
+                <ProtectedRoute>
+                  <EditProfile />
+                </ProtectedRoute>
+              }
+            />
+
             <Route path="/events" element={<Events />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
 
             <Route path="*" element={<NotFound />} />
           </Routes>

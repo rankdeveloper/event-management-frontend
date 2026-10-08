@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { format } from "date-fns";
 import {
@@ -35,12 +35,14 @@ export default function EventDetails() {
   const [completed, setCompleted] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showTicketModal, setShowTicketModal] = useState(false);
+  const hasAuthRedirectedRef = useRef(false);
 
   useEffect(() => {
-    if (authLoading) return;
+    if (authLoading || hasAuthRedirectedRef.current) return;
     if (!user) {
+      hasAuthRedirectedRef.current = true;
       toast.error("Please login first");
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
     }
   }, [authLoading, user, navigate]);
 
@@ -140,6 +142,22 @@ export default function EventDetails() {
       );
       setCompleted(!val);
     }
+  };
+
+  const handleGetTicket = () => {
+    if (!user) {
+      toast.error("Please login to get a ticket");
+      navigate("/login");
+      return;
+    }
+
+    if (user.isGuest) {
+      toast.error("Guest users cannot get tickets. Please create an account.");
+      navigate("/dashboard");
+      return;
+    }
+
+    setShowTicketModal(true);
   };
 
   const handleAttendance = async () => {
@@ -522,7 +540,7 @@ export default function EventDetails() {
                         event.ticketTypes.length > 0 &&
                         !isOwner && (
                           <button
-                            onClick={() => setShowTicketModal(true)}
+                            onClick={handleGetTicket}
                             className="w-full py-3 px-4 rounded-xl text-center text-sm font-semibold bg-violet-600 text-white hover:bg-violet-700 transition-colors"
                           >
                             Get Ticket

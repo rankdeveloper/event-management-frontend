@@ -1,7 +1,8 @@
 import { SOCIAL_ICONS } from "@/rowData";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Calendar } from "lucide-react";
+
 import { Link } from "react-router-dom";
+import logo from "../../src/assets/logo.png";
 
 const footerLinks = [
   { label: "Events", to: "/events" },
@@ -16,12 +17,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div className="flex flex-col gap-3">
             <Link to="/" className="flex items-center gap-2 w-fit">
-              <div className="bg-indigo-600 p-1.5 rounded-lg">
-                <Calendar className="h-4 w-4 text-white" />
-              </div>
-              <span className="font-bold text-lg text-gray-900 tracking-tight">
-                Evenza
-              </span>
+              <img src={logo} alt="Evenza Logo" className="h-10 w-auto" />
             </Link>
             <p className="text-sm text-gray-500 leading-relaxed max-w-xs">
               Making event planning simple, efficient, and stress-free for

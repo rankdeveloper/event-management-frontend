@@ -1,10 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { tickets } from "../../lib/api";
-import { TicketType } from "../authStore";
+import { TicketType, useAuthStore } from "../authStore";
 import { X, Ticket, CheckCircle2, IndianRupee } from "lucide-react";
 import QRCode from "react-qr-code";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+
+interface BookedTicket {
+  qrData?: string;
+  ticketId?: string;
+  ticketType?: string;
+  price?: number;
+}
 
 interface Props {
   eventId: string;
@@ -20,8 +28,25 @@ export default function TicketModal({
   onClose,
 }: Props) {
   const [selected, setSelected] = useState<TicketType | null>(null);
-  const [bookedTicket, setBookedTicket] = useState<any>(null);
+  const [bookedTicket, setBookedTicket] = useState<BookedTicket | null>(null);
   const queryClient = useQueryClient();
+  const { user } = useAuthStore();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) {
+      toast.error("Please login to get a ticket");
+      navigate("/login");
+      onClose();
+      return;
+    }
+
+    if (user.isGuest) {
+      toast.error("Guest users cannot get tickets. Please create an account.");
+      navigate("/dashboard");
+      onClose();
+    }
+  }, [user, navigate, onClose]);
 
   const qrValue =
     typeof bookedTicket?.qrData === "string" &&
@@ -31,14 +56,34 @@ export default function TicketModal({
 
   const { mutate, isPending } = useMutation({
     mutationFn: () => tickets.bookTicket(eventId, selected!.name),
-    onSuccess: (data) => {
+    onSuccess: (data: BookedTicket) => {
       setBookedTicket(data);
       queryClient.invalidateQueries({ queryKey: ["my-tickets"] });
       queryClient.invalidateQueries({ queryKey: ["my-events"] });
       toast.success("Ticket booked successfully!");
     },
-    onError: (err: any) => toast.error(err.message || "Failed to book ticket"),
+    onError: (err: Error) =>
+      toast.error(err.message || "Failed to book ticket"),
   });
+
+  const handleBookTicket = () => {
+    if (!user) {
+      toast.error("Please login to get a ticket");
+      navigate("/login");
+      onClose();
+      return;
+    }
+
+    if (user.isGuest) {
+      toast.error("Guest users cannot get tickets. Please create an account.");
+      navigate("/dashboard");
+      onClose();
+      return;
+    }
+
+    if (!selected) return;
+    mutate();
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
@@ -137,7 +182,7 @@ export default function TicketModal({
               </div>
 
               <button
-                onClick={() => mutate()}
+                onClick={handleBookTicket}
                 disabled={!selected || isPending}
                 className="w-full py-3 bg-indigo-600 text-white rounded-xl font-semibold text-sm hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
               >

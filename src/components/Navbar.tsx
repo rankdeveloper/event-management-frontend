@@ -13,6 +13,7 @@ import {
 import { useAuthStore } from "../authStore";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import logo from "../../src/assets/logo.png";
 
 export default function Navbar() {
   const { user, signOut } = useAuthStore();
@@ -24,10 +25,7 @@ export default function Navbar() {
       <div className="mx-auto px-4 xl:px-16">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center space-x-2 group">
-            <div className="bg-indigo-600 p-1.5 rounded-lg group-hover:bg-indigo-700 transition-colors">
-              <Calendar className="h-5 w-5 text-white" />
-            </div>
-            <span className="font-bold text-xl text-gray-900 tracking-tight">Evenza</span>
+            <img src={logo} alt="Evenza Logo" className="h-10 w-auto" />
           </Link>
 
           <div className="md:hidden">
@@ -35,7 +33,11 @@ export default function Navbar() {
               onClick={toggleMenu}
               className="text-gray-600 hover:text-indigo-600 p-2 rounded-lg hover:bg-indigo-50 transition-colors"
             >
-              {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {menuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
             </button>
           </div>
 
@@ -98,7 +100,9 @@ export default function Navbar() {
                   to="/login"
                   className={({ isActive }) =>
                     `flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      isActive ? "text-indigo-600 bg-indigo-50" : "text-gray-600 hover:text-indigo-600 hover:bg-indigo-50"
+                      isActive
+                        ? "text-indigo-600 bg-indigo-50"
+                        : "text-gray-600 hover:text-indigo-600 hover:bg-indigo-50"
                     }`
                   }
                 >
@@ -156,14 +160,21 @@ export default function Navbar() {
                     className="flex items-center gap-2 text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
                   >
                     {user.pic ? (
-                      <img src={user?.pic} alt="profile" className="h-6 w-6 rounded-full object-cover" />
+                      <img
+                        src={user?.pic}
+                        alt="profile"
+                        className="h-6 w-6 rounded-full object-cover"
+                      />
                     ) : (
                       <UserCircle className="text-indigo-500 h-6 w-6" />
                     )}
                     Profile
                   </NavLink>
                   <button
-                    onClick={() => { signOut(); toggleMenu(); }}
+                    onClick={() => {
+                      signOut();
+                      toggleMenu();
+                    }}
                     className="flex items-center gap-2 text-red-500 hover:bg-red-50 px-3 py-2.5 rounded-lg text-sm font-medium w-full transition-colors"
                   >
                     <LogOut className="h-4 w-4" />
