@@ -1,6 +1,5 @@
 import { Link, NavLink } from "react-router-dom";
 import {
-  Calendar,
   LogIn,
   LogOut,
   UserPlus,
