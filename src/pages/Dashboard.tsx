@@ -159,7 +159,7 @@ export default function Dashboard() {
       label: "My Tickets",
       desc: "Events you're attending",
       icon: Ticket,
-      to: "/events",
+      to: "/my-tickets",
       color: "text-emerald-600",
       bg: "bg-emerald-50",
       border: "border-emerald-100",
@@ -184,7 +184,12 @@ export default function Dashboard() {
     ],
   };
 
-  const tabs: { key: Tab; label: string; icon: any; count?: number }[] = [
+  const tabs: {
+    key: Tab;
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+    count?: number;
+  }[] = [
     {
       key: "upcoming",
       label: "Upcoming",
@@ -274,7 +279,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="px-4 xl:px-20 -mt-8 pb-10 space-y-6">
+      <div className="px-4 xl:px-20 mt-8 pb-10 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {statCards.map(({ label, value, icon: Icon, bg, color, border }) => (
             <div

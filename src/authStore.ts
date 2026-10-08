@@ -8,6 +8,12 @@ export interface User {
   pic?: string;
   isGuest?: boolean;
 }
+export interface TicketType {
+  name: string;
+  price: number;
+  capacity: number;
+}
+
 export interface Event {
   _id: string;
   title: string;
@@ -21,6 +27,7 @@ export interface Event {
   createdAt: string;
   image: string;
   completed?: boolean;
+  ticketTypes?: TicketType[];
 }
 
 interface AuthState {

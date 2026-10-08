@@ -118,3 +118,21 @@ export const events = {
       method: "DELETE",
     }),
 };
+
+export const tickets = {
+  bookTicket: (eventId: string, ticketType: string) =>
+    fetchApi(`/tickets/${eventId}/book`, {
+      method: "POST",
+      body: JSON.stringify({ ticketType }),
+    }),
+
+  getMyTickets: () => fetchApi("/tickets/my"),
+
+  getEventTickets: (eventId: string) => fetchApi(`/tickets/event/${eventId}`),
+
+  checkIn: (ticketId: string) =>
+    fetchApi("/tickets/checkin", {
+      method: "POST",
+      body: JSON.stringify({ ticketId }),
+    }),
+};

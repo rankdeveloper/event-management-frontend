@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import MyTickets from "./pages/MyTickets";
 import "./App.css";
 import CreateEvent from "./pages/CreateEvent";
 import { useEffect } from "react";
@@ -21,7 +22,7 @@ export default function App() {
 
   useEffect(() => {
     checkUser();
-  }, []);
+  }, [checkUser]);
 
   return (
     <BrowserRouter>
@@ -32,6 +33,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/my-tickets" element={<MyTickets />} />
             <Route
               path="/createEvent/:id"
               element={

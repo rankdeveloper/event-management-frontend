@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { format } from "date-fns";
 import {
@@ -21,11 +21,12 @@ import toast from "react-hot-toast";
 import OwnerImage from "@/components/OwnerImage";
 import MessageBox from "@/components/messageBox";
 import image1 from "../assets/image1.png";
+import TicketModal from "@/components/TicketModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function EventDetails() {
   const { id } = useParams<{ id: string }>();
-  const { user } = useAuthStore();
+  const { user, loading: authLoading } = useAuthStore();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [event, setEvent] = useState<Event | null>(null);
@@ -33,32 +34,67 @@ export default function EventDetails() {
   const [deleting, setDeleting] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [showTicketModal, setShowTicketModal] = useState(false);
 
   useEffect(() => {
+    if (authLoading) return;
     if (!user) {
       toast.error("Please login first");
       navigate("/dashboard");
     }
-  }, [user]);
+  }, [authLoading, user, navigate]);
+
+  const fetchEventDetails = useCallback(async () => {
+    try {
+      const data = await events.getEvent(id!);
+      const attendees = Array.isArray(data.attendees) ? data.attendees : [];
+      data.attendees = attendees.map(
+        (a: {
+          id?: string;
+          _id?: string;
+          username?: string;
+          email?: string;
+          pic?: string;
+        }) => ({
+          ...a,
+          id: a.id || a._id,
+        }),
+      );
+      setEvent(data);
+      setCompleted(data.completed || false);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Error loading event details",
+      );
+      navigate("/dashboard");
+    } finally {
+      setLoading(false);
+    }
+  }, [id, navigate]);
 
   useEffect(() => {
-    if (id && user) fetchEventDetails();
-  }, [id]);
+    if (!id || authLoading) return;
+    if (user) fetchEventDetails();
+  }, [id, user, authLoading, fetchEventDetails]);
 
-  useQuery({
+  const bookmarksQuery = useQuery({
     queryKey: ["bookmarks"],
     queryFn: () => events.getBookmarks(),
     enabled: !!user && !user.isGuest,
-    onSuccess: (data: any) => {
-      const ids = data.bookmarks.map((b: any) => b._id || b);
-      setIsBookmarked(ids.includes(id));
-    },
-  } as any);
+  });
+
+  useEffect(() => {
+    if (!bookmarksQuery.data || !id) return;
+    const ids = (bookmarksQuery.data.bookmarks ?? []).map(
+      (b: { _id?: string; id?: string }) => b._id || b.id || "",
+    );
+    setIsBookmarked(ids.includes(id));
+  }, [bookmarksQuery.data, id]);
 
   const bookmarkMutation = useMutation({
     mutationFn: () => events.toggleBookmark(id!),
     onMutate: () => setIsBookmarked((prev) => !prev),
-    onSuccess: (data: any) => {
+    onSuccess: (data: { bookmarked?: boolean }) => {
       queryClient.invalidateQueries({ queryKey: ["bookmarks"] });
       toast.success(data.bookmarked ? "Event bookmarked!" : "Bookmark removed");
     },
@@ -87,25 +123,6 @@ export default function EventDetails() {
     } else {
       navigator.clipboard.writeText(url);
       toast.success("Link copied to clipboard!");
-    }
-  };
-
-  const fetchEventDetails = async () => {
-    try {
-      const data = await events.getEvent(id!);
-      data.attendees = (data.attendees as any[]).map((a) => ({
-        ...a,
-        id: a.id || a._id,
-      }));
-      setEvent(data);
-      setCompleted(data.completed || false);
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Error loading event details",
-      );
-      navigate("/dashboard");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -223,9 +240,11 @@ export default function EventDetails() {
   }
 
   const isAttending = user
-    ? event.attendees.some((a: any) => (a.id || a._id) === user.id)
+    ? event.attendees.some(
+        (a: { id?: string; _id?: string }) => (a.id || a._id) === user.id,
+      )
     : false;
-  const isOwner = user && (event.createdBy as any)._id === user.id;
+  const isOwner = user && (event.createdBy as { _id?: string })._id === user.id;
   const isFull = event.attendees.length >= event.maxAttendees;
   const attendancePct = Math.min(
     (event.attendees.length / event.maxAttendees) * 100,
@@ -243,7 +262,6 @@ export default function EventDetails() {
         </Link>
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          {/* Hero */}
           <div className="relative h-64 md:h-80 overflow-hidden">
             <img
               src={event.image || image1}
@@ -256,7 +274,7 @@ export default function EventDetails() {
                 {event.category}
               </span>
             )}
-            {/* Top-right action buttons */}
+
             <div className="absolute top-4 right-4 flex gap-2">
               <button
                 onClick={handleShare}
@@ -285,8 +303,8 @@ export default function EventDetails() {
               <div className="flex items-center gap-2 shrink-0">
                 <MessageBox
                   eventId={id!}
-                  currentUser={user?.username!}
-                  profilePic={user?.pic!}
+                  currentUser={user?.username ?? ""}
+                  profilePic={user?.pic ?? ""}
                 />
                 {isOwner && (
                   <>
@@ -482,23 +500,35 @@ export default function EventDetails() {
                       Guest users cannot register
                     </div>
                   ) : (
-                    <button
-                      onClick={handleAttendance}
-                      disabled={!user || (isFull && !isAttending)}
-                      className={`w-full py-3 px-4 rounded-xl text-center text-sm font-semibold transition-colors ${
-                        isAttending
-                          ? "bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
+                    <div className="space-y-3">
+                      <button
+                        onClick={handleAttendance}
+                        disabled={!user || (isFull && !isAttending)}
+                        className={`w-full py-3 px-4 rounded-xl text-center text-sm font-semibold transition-colors ${
+                          isAttending
+                            ? "bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
+                            : isFull
+                              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                              : "bg-indigo-600 text-white hover:bg-indigo-700"
+                        }`}
+                      >
+                        {isAttending
+                          ? "Cancel Registration"
                           : isFull
-                            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                            : "bg-indigo-600 text-white hover:bg-indigo-700"
-                      }`}
-                    >
-                      {isAttending
-                        ? "Cancel Registration"
-                        : isFull
-                          ? "Event is Full"
-                          : "Register for Event"}
-                    </button>
+                            ? "Event is Full"
+                            : "Register for Event"}
+                      </button>
+                      {event.ticketTypes &&
+                        event.ticketTypes.length > 0 &&
+                        !isOwner && (
+                          <button
+                            onClick={() => setShowTicketModal(true)}
+                            className="w-full py-3 px-4 rounded-xl text-center text-sm font-semibold bg-violet-600 text-white hover:bg-violet-700 transition-colors"
+                          >
+                            Get Ticket
+                          </button>
+                        )}
+                    </div>
                   )
                 ) : (
                   <Link
@@ -507,6 +537,15 @@ export default function EventDetails() {
                   >
                     Sign in to Register
                   </Link>
+                )}
+
+                {showTicketModal && event.ticketTypes && (
+                  <TicketModal
+                    eventId={id!}
+                    eventTitle={event.title}
+                    ticketTypes={event.ticketTypes}
+                    onClose={() => setShowTicketModal(false)}
+                  />
                 )}
               </div>
             </div>
